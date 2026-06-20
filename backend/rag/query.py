@@ -40,11 +40,11 @@ async def analyze_content(content: str, content_type: str) -> AsyncGenerator[str
     embed_model = OpenAIEmbedding(model="text-embedding-3-small")
     query_embedding = embed_model.get_query_embedding(content)
 
-    retriever = index.as_retriever(similarity_top_k=10)
+    retriever = index.as_retriever(similarity_top_k=15)
     nodes_with_scores = retriever.retrieve(content)
 
     nodes_with_scores.sort(key=lambda n: n.score if n.score is not None else 0, reverse=True)
-    top_nodes = nodes_with_scores[:4]
+    top_nodes = nodes_with_scores[:6]
 
     context_chunks = "\n\n---\n\n".join(
         f"[WCAG Context {i+1}]\n{n.node.get_content()}" for i, n in enumerate(top_nodes)
