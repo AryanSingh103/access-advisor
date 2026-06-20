@@ -33,8 +33,9 @@ export default function ScanPage() {
 
     try {
       for await (const violation of scanUrl(url)) {
-        if ("error" in (violation as Record<string, unknown>)) {
-          setError((violation as Record<string, unknown>).error as string);
+        const v = violation as unknown as Record<string, unknown>;
+        if ("error" in v) {
+          setError(v.error as string);
           break;
         }
         setViolations((prev) => [...prev, violation]);
