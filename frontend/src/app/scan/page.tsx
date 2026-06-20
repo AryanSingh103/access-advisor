@@ -1,0 +1,179 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { WcagBadge } from "@/components/WcagBadge";
+import { scanUrl } from "@/lib/api";
+import type { Violation } from "@/lib/api";
+
+function AccessibilityIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="5" r="2" />
+      <path d="M12 22V12m0 0l-4 4m4-4l4 4" />
+      <path d="M8 12H4m12 0h4" />
+    </svg>
+  );
+}
+
+export default function ScanPage() {
+  const [url, setUrl] = useState("");
+  const [isScanning, setIsScanning] = useState(false);
+  const [violations, setViolations] = useState<Violation[]>([]);
+  const [scannedUrl, setScannedUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleScan = async () => {
+    if (!url.trim()) return;
+
+    setIsScanning(true);
+    setViolations([]);
+    setError(null);
+    setScannedUrl(url);
+
+    try {
+      for await (const violation of scanUrl(url)) {
+        if ("error" in (violation as Record<string, unknown>)) {
+          setError((violation as Record<string, unknown>).error as string);
+          break;
+        }
+        setViolations((prev) => [...prev, violation]);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Scan failed.");
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
+  const levelCounts = violations.reduce<Record<string, number>>((acc, v) => {
+    acc[v.level] = (acc[v.level] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  return (
+    <div className="min-h-screen bg-[#F8F8FB]">
+      {/* Nav */}
+      <header className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-100">
+        <Link href="/" className="flex items-center gap-2">
+          <div className="w-[22px] h-[22px] rounded-[5px] bg-[#534AB7] flex items-center justify-center text-white">
+            <AccessibilityIcon />
+          </div>
+          <span className="text-[15px] font-medium text-gray-900">AccessAdvisor</span>
+        </Link>
+        <Link href="/dashboard" className="text-[14px] text-gray-600 hover:text-[#534AB7] transition-colors">
+          Dashboard
+        </Link>
+      </header>
+
+      <main className="max-w-3xl mx-auto px-8 py-12">
+        <h1 className="text-[24px] font-medium text-gray-900 mb-2">URL Scanner</h1>
+        <p className="text-[14px] text-gray-500 mb-8 leading-relaxed">
+          Paste any live URL and get a full WCAG 2.1 accessibility audit streamed back in real time.
+        </p>
+
+        {/* URL input */}
+        <div className="flex gap-3 mb-8">
+          <input
+            type="url"
+            placeholder="https://example.com"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && !isScanning && handleScan()}
+            className="flex-1 px-4 py-3 text-[15px] border border-gray-200 rounded-xl focus:outline-none focus:border-[#534AB7] bg-white"
+          />
+          <button
+            onClick={handleScan}
+            disabled={isScanning || !url.trim()}
+            className="px-6 py-3 rounded-xl bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#3C3489] transition-colors disabled:opacity-50"
+          >
+            {isScanning ? "Scanning..." : "Scan"}
+          </button>
+        </div>
+
+        {/* Loading state */}
+        {isScanning && (
+          <div className="flex items-center gap-3 text-[14px] text-gray-500 mb-6">
+            <div className="flex gap-1">
+              <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce [animation-delay:-0.3s]" />
+              <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce [animation-delay:-0.15s]" />
+              <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce" />
+            </div>
+            Analyzing page against WCAG 2.1...
+            {violations.length > 0 && (
+              <span className="text-[#534AB7]">{violations.length} found so far</span>
+            )}
+          </div>
+        )}
+
+        {/* Error */}
+        {error && (
+          <div className="bg-[#FCEBEB] text-[#A32D2D] text-[14px] rounded-xl px-4 py-3 mb-6">
+            {error}
+          </div>
+        )}
+
+        {/* Results */}
+        {scannedUrl && !isScanning && violations.length > 0 && (
+          <>
+            {/* Summary */}
+            <div className="bg-white rounded-xl p-5 border border-gray-100 mb-6">
+              <p className="text-[13px] text-gray-400 mb-1 font-mono truncate">{scannedUrl}</p>
+              <div className="flex items-center gap-4 mt-2">
+                <div>
+                  <p className="text-[22px] font-medium text-gray-900">{violations.length}</p>
+                  <p className="text-[12px] text-gray-500">total issues</p>
+                </div>
+                {Object.entries(levelCounts).map(([level, count]) => (
+                  <div key={level}>
+                    <p className="text-[22px] font-medium text-gray-900">{count}</p>
+                    <p className="text-[12px] text-gray-500">Level {level}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Violation cards */}
+            <div className="space-y-3">
+              {violations.map((v, i) => (
+                <div key={i} className="bg-white rounded-xl p-5 border border-gray-100">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <WcagBadge
+                      criterion={v.criterion}
+                      name={v.criterion_name ?? v.description.slice(0, 30)}
+                      level={v.level as "A" | "AA" | "AAA"}
+                    />
+                  </div>
+                  {v.criterion_name && (
+                    <h3 className="text-[14px] font-medium text-gray-900 mb-1">{v.criterion_name}</h3>
+                  )}
+                  <p className="text-[14px] text-gray-600 leading-relaxed mb-3">{v.description}</p>
+                  {v.fix && (
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[11px] text-gray-400 font-medium uppercase mb-1.5">Recommended fix</p>
+                      <code className="text-[12px] text-gray-700 whitespace-pre-wrap break-all">
+                        {v.fix}
+                      </code>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {scannedUrl && !isScanning && violations.length === 0 && !error && (
+          <div className="text-center py-12">
+            <div className="w-10 h-10 rounded-full bg-[#EAF3DE] flex items-center justify-center mx-auto mb-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3B6D11" strokeWidth="2">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <p className="text-[15px] font-medium text-gray-900">No violations found</p>
+            <p className="text-[14px] text-gray-500 mt-1">This page passed all retrieved WCAG 2.1 checks.</p>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
