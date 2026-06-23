@@ -119,3 +119,53 @@ export async function* scanUrl(url: string): AsyncGenerator<Violation> {
     }
   }
 }
+
+export interface RepoScanEvent {
+  type: "file_start" | "file_result" | "error" | "done";
+  file?: string;
+  index?: number;
+  total?: number;
+  violations?: Violation[];
+  skipped?: boolean;
+  reason?: string;
+  message?: string;
+  total_files?: number;
+  total_violations?: number;
+}
+
+export async function* scanRepo(
+  repo: string,
+  githubToken: string
+): AsyncGenerator<RepoScanEvent> {
+  const res = await fetch(`${BACKEND_URL}/api/repo-scan`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ repo, github_token: githubToken }),
+  });
+
+  if (!res.ok || !res.body) {
+    throw new Error(`Repo scan failed: ${res.status}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+
+    for (const line of lines) {
+      if (!line.trim()) continue;
+      try {
+        yield JSON.parse(line) as RepoScanEvent;
+      } catch {
+        // skip malformed lines
+      }
+    }
+  }
+}
