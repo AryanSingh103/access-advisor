@@ -6,7 +6,7 @@ from fastapi.responses import StreamingResponse
 from github import Github, GithubException
 from pydantic import BaseModel
 
-from rag.query import analyze_content
+from rag.query import analyze_content, has_ui_content
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -66,6 +66,18 @@ async def repo_scan(request: RepoScanRequest) -> StreamingResponse:
                 if isinstance(file_content, list):
                     continue
                 code = file_content.decoded_content.decode("utf-8", errors="replace")
+
+                if not has_ui_content(code):
+                    logger.info("Skipping %s — no UI markup detected", path)
+                    yield json.dumps({
+                        "type": "file_result",
+                        "file": path,
+                        "index": index,
+                        "violations": [],
+                        "skipped": True,
+                        "reason": "no UI markup",
+                    }) + "\n"
+                    continue
 
                 full_response = ""
                 async for token in analyze_content(code, "code"):
