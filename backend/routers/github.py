@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException
 from github import Github
 from pydantic import BaseModel
 
-from rag.query import analyze_content
+from rag.query import analyze_content, has_ui_content
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -89,6 +89,9 @@ async def analyze_pr(request: AnalyzePRRequest) -> AnalyzePRResponse:
 
     for file in pr.get_files():
         if not file.patch:
+            continue
+        if not has_ui_content(file.patch):
+            logger.info("Skipping %s — no UI markup detected", file.filename)
             continue
 
         full_response = ""
