@@ -1,5 +1,6 @@
 import json
 import logging
+import re
 from urllib.parse import urlparse
 
 from fastapi import APIRouter, HTTPException
@@ -12,8 +13,6 @@ from rag.query import analyze_content
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
-CHUNK_SIZE = 2000
-
 
 class ScanRequest(BaseModel):
     url: str
@@ -24,23 +23,6 @@ def _validate_url(url: str) -> None:
     if parsed.scheme not in ("http", "https"):
         raise HTTPException(status_code=400, detail="URL must start with http:// or https://")
 
-
-def _chunk_html(html: str, size: int = CHUNK_SIZE) -> list[str]:
-    return [html[i : i + size] for i in range(0, len(html), size)]
-
-
-def _dedup_violations(violations: list[dict]) -> list[dict]:
-    seen: set[str] = set()
-    result: list[dict] = []
-    for v in violations:
-        key = v.get("criterion", "") + v.get("description", "")[:80]
-        if key not in seen:
-            seen.add(key)
-            result.append(v)
-    return result
-
-
-import re
 
 _VIOLATION_RE = re.compile(
     r"\[SC\s*([\d.]+)\s*[-–]\s*([^(]+?)\s*\(Level\s*(A{1,3})\)\]:\s*(.*?)(?=Fix:|$)",
@@ -83,19 +65,12 @@ async def scan_url(request: ScanRequest) -> StreamingResponse:
             yield json.dumps({"error": f"Failed to render URL: {exc}"}) + "\n"
             return
 
-        chunks = _chunk_html(html)
-        all_violations: list[dict] = []
+        full_response = ""
+        async for token in analyze_content(html, "dom"):
+            full_response += token
 
-        for i, chunk in enumerate(chunks):
-            full_response = ""
-            async for token in analyze_content(chunk, "dom"):
-                full_response += token
-
-            violations = _parse_violations_from_text(full_response)
-            all_violations.extend(violations)
-
-        deduped = _dedup_violations(all_violations)
-        for v in deduped:
+        violations = _parse_violations_from_text(full_response)
+        for v in violations:
             yield json.dumps(v) + "\n"
 
     return StreamingResponse(generate(), media_type="application/x-ndjson")
