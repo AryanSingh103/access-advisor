@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import sys
 from typing import AsyncGenerator
 
@@ -11,6 +12,16 @@ from config import settings
 from rag.ingest import get_or_create_index
 
 logger = logging.getLogger(__name__)
+
+_UI_PATTERN = re.compile(
+    r"<div|<button|<img|<input|<a\s|<form|<label|<select|<textarea|jsx|\.tsx",
+    re.IGNORECASE,
+)
+
+
+def has_ui_content(content: str) -> bool:
+    return bool(_UI_PATTERN.search(content))
+
 
 SYSTEM_PROMPT = (
     "You are an accessibility compliance expert reviewing code and web pages against WCAG 2.1. "
