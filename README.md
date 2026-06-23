@@ -2,7 +2,7 @@
 
 **Catch accessibility issues before they ship.**
 
-AccessAdvisor is a full-stack AI tool that reviews GitHub pull requests and live web pages for WCAG 2.1 accessibility violations using a RAG pipeline grounded in the official specification. Every finding cites a specific Success Criterion with an exact code fix — no hallucinations, no guesses.
+AccessAdvisor is a full-stack AI tool that reviews GitHub pull requests, live web pages, and entire repositories for WCAG 2.1 accessibility violations using a RAG pipeline grounded in the official specification. Every finding cites a specific Success Criterion with an exact code fix — no hallucinations, no guesses.
 
 ---
 
@@ -12,7 +12,11 @@ AccessAdvisor is a full-stack AI tool that reviews GitHub pull requests and live
 
 🌐 **URL Scanner** — Paste any live URL and a headless browser renders the full page. The pipeline analyzes the DOM and streams back a structured audit in real time — violations, affected elements, and fixes.
 
+📂 **Repo Scanner** — Don't have a deployed URL? Point AccessAdvisor at any GitHub repository. It walks the file tree, fetches every UI file (`.html`, `.jsx`, `.tsx`, `.vue`, `.svelte`), and streams a full accessibility report with per-file violation counts and a downloadable JSON report.
+
 📄 **Spec-grounded, not hallucinated** — The WCAG 2.1 specification is chunked, embedded, and stored locally in ChromaDB. Every analysis retrieves the most relevant spec excerpts and forces the model to only cite violations that appear in that context.
+
+⚡ **Cost-optimized pipeline** — Non-UI files (utilities, configs, types) are filtered out before any API call. Each file is batched into a single Claude call rather than chunked, cutting API costs dramatically while keeping results accurate.
 
 ---
 
@@ -54,7 +58,10 @@ INGEST  (runs once on first startup)
 
 QUERY  (per request)
 ──────────────────────────────────────────
-  Code diff or rendered DOM HTML
+  Code diff / rendered DOM / repo file content
+              │
+              ▼
+  UI filter — skip non-markup files instantly
               │
               ▼
   Embed input → same OpenAI model
@@ -69,7 +76,7 @@ QUERY  (per request)
   Prompt: system instructions + WCAG context + input
               │
               ▼
-  Claude claude-sonnet-4-5 streams response
+  Claude claude-sonnet-4-5 streams response (1 call per file)
               │
               ▼
   [SC X.X.X · Criterion Name · Level A/AA] + fix
@@ -91,22 +98,24 @@ access-advisor/
 │   │   └── wcag21_quickref.html # WCAG 2.1 Quick Reference
 │   ├── rag/
 │   │   ├── ingest.py        # Document loading, chunking, ChromaDB storage
-│   │   └── query.py         # Retrieval, re-ranking, Claude streaming
+│   │   └── query.py         # Retrieval, re-ranking, UI filter, Claude streaming
 │   └── routers/
 │       ├── analyze.py       # POST /api/analyze
 │       ├── github.py        # POST /api/github/analyze-pr + post-comments
-│       └── scanner.py       # POST /api/scan-url
+│       ├── scanner.py       # POST /api/scan-url (headless browser)
+│       └── repo_scan.py     # POST /api/repo-scan (GitHub file tree)
 └── frontend/
     └── src/
         ├── app/
-        │   ├── page.tsx             # Landing page
-        │   ├── dashboard/           # Dashboard + PR list
-        │   ├── dashboard/pr/[id]/   # PR analysis view
-        │   └── scan/                # URL scanner
+        │   ├── page.tsx              # Landing page
+        │   ├── dashboard/            # Dashboard + PR list
+        │   ├── dashboard/pr/[id]/    # PR analysis view
+        │   ├── scan/                 # URL scanner
+        │   └── scan/repo/            # Repo scanner
         ├── components/
-        │   └── WcagBadge.tsx        # Criterion badge with WCAG links
+        │   └── WcagBadge.tsx         # Criterion badge with WCAG links
         └── lib/
-            └── api.ts               # Backend helpers, streaming generators
+            └── api.ts                # Backend helpers, streaming generators
 ```
 
 ---
@@ -118,8 +127,9 @@ access-advisor/
 | `GET` | `/health` | Health check |
 | `POST` | `/api/analyze` | Analyze code or DOM — SSE stream |
 | `POST` | `/api/github/analyze-pr` | Fetch PR diff → violations JSON |
-| `POST` | `/api/github/post-comments` | Post inline comments on a PR |
+| `POST` | `/api/github/post-comments` | Post inline review comments on a PR |
 | `POST` | `/api/scan-url` | Render URL → stream violations as NDJSON |
+| `POST` | `/api/repo-scan` | Walk repo file tree → stream per-file results |
 
 ---
 
