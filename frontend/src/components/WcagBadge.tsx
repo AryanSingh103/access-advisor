@@ -5,9 +5,9 @@ interface WcagBadgeProps {
 }
 
 const levelStyles: Record<string, string> = {
-  A: "bg-[#FCEBEB] text-[#A32D2D]",
-  AA: "bg-[#FAEEDA] text-[#854F0B]",
-  AAA: "bg-[#EAF3DE] text-[#3B6D11]",
+  A: "bg-[#2D1515] text-[#F87171]",
+  AA: "bg-[#2D1F0F] text-[#FBBF24]",
+  AAA: "bg-[#0F2D1A] text-[#4ADE80]",
 };
 
 function criterionToSlug(criterion: string, name: string): string {

@@ -71,16 +71,16 @@ export default function PRAnalysisPage({ params }: PageProps) {
   );
 
   return (
-    <div className="min-h-screen bg-[#F8F8FB] flex flex-col">
+    <div className="min-h-screen bg-[#0F0F12] flex flex-col">
       {/* Top bar */}
-      <header className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-100">
+      <header className="flex items-center justify-between px-6 py-3 bg-[#18181B] border-b border-[#27272A]">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-[22px] h-[22px] rounded-[5px] bg-[#534AB7] flex items-center justify-center text-white">
             <AccessibilityIcon />
           </div>
-          <span className="text-[15px] font-medium text-gray-900">AccessAdvisor</span>
+          <span className="text-[15px] font-medium text-[#FAFAFA]">AccessAdvisor</span>
         </Link>
-        <Link href="/dashboard" className="text-[14px] text-[#534AB7] hover:underline">
+        <Link href="/dashboard" className="text-[14px] text-[#A89FF5] hover:underline">
           ← Back to dashboard
         </Link>
       </header>
@@ -90,12 +90,12 @@ export default function PRAnalysisPage({ params }: PageProps) {
         <div className="flex items-start justify-between mb-6">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#EAF3DE] text-[#3B6D11]">
+              <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#0F2D1A] text-[#4ADE80]">
                 Open
               </span>
-              <h1 className="text-[18px] font-medium text-gray-900">Pull Request Analysis</h1>
+              <h1 className="text-[18px] font-medium text-[#FAFAFA]">Pull Request Analysis</h1>
             </div>
-            <p className="text-[14px] text-gray-500">
+            <p className="text-[14px] text-[#71717A]">
               Analyze a GitHub PR for WCAG 2.1 accessibility violations
             </p>
           </div>
@@ -104,7 +104,7 @@ export default function PRAnalysisPage({ params }: PageProps) {
               <button
                 onClick={handlePostComments}
                 disabled={isPosting}
-                className="px-4 py-2 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#3C3489] transition-colors disabled:opacity-50"
+                className="px-4 py-2 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#6358C5] transition-colors disabled:opacity-50"
               >
                 {isPosting ? "Posting..." : posted !== null ? `${posted} posted` : "Post to GitHub"}
               </button>
@@ -113,43 +113,43 @@ export default function PRAnalysisPage({ params }: PageProps) {
         </div>
 
         {/* Input form */}
-        <div className="bg-white rounded-xl p-5 border border-gray-100 mb-6">
-          <h2 className="text-[15px] font-medium text-gray-900 mb-3">PR details</h2>
+        <div className="bg-[#18181B] rounded-xl p-5 border border-[#27272A] mb-6">
+          <h2 className="text-[15px] font-medium text-[#FAFAFA] mb-3">PR details</h2>
           <div className="grid grid-cols-3 gap-3 mb-3">
             <input
               type="text"
               placeholder="owner/repo"
               value={repo}
               onChange={(e) => setRepo(e.target.value)}
-              className="px-3 py-2 text-[14px] border border-gray-200 rounded-md focus:outline-none focus:border-[#534AB7]"
+              className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
             />
             <input
               type="number"
               placeholder="PR number"
               value={prNumber}
               onChange={(e) => setPrNumber(e.target.value)}
-              className="px-3 py-2 text-[14px] border border-gray-200 rounded-md focus:outline-none focus:border-[#534AB7]"
+              className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
             />
             <input
               type="password"
               placeholder="GitHub token (repo scope)"
               value={githubToken}
               onChange={(e) => setGithubToken(e.target.value)}
-              className="px-3 py-2 text-[14px] border border-gray-200 rounded-md focus:outline-none focus:border-[#534AB7]"
+              className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
             />
           </div>
           <button
             onClick={handleAnalyze}
             disabled={isAnalyzing}
-            className="px-5 py-2 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#3C3489] transition-colors disabled:opacity-50"
+            className="px-5 py-2 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#6358C5] transition-colors disabled:opacity-50"
           >
             {isAnalyzing ? "Analyzing..." : "Analyze PR"}
           </button>
-          {error && <p className="mt-2 text-[13px] text-[#A32D2D]">{error}</p>}
+          {error && <p className="mt-2 text-[13px] text-[#F87171]">{error}</p>}
         </div>
 
         {isAnalyzing && (
-          <div className="flex items-center gap-2 text-[14px] text-gray-500 mb-4">
+          <div className="flex items-center gap-2 text-[14px] text-[#71717A] mb-4">
             <div className="w-4 h-4 rounded-full border-2 border-[#534AB7] border-t-transparent animate-spin" />
             Analyzing PR files against WCAG 2.1...
           </div>
@@ -160,19 +160,17 @@ export default function PRAnalysisPage({ params }: PageProps) {
           <div className="flex gap-6">
             {/* Left: file summary */}
             <div className="flex-1 min-w-0">
-              <h2 className="text-[15px] font-medium text-gray-900 mb-3">
-                Files analyzed
-              </h2>
-              <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+              <h2 className="text-[15px] font-medium text-[#FAFAFA] mb-3">Files analyzed</h2>
+              <div className="bg-[#18181B] rounded-xl border border-[#27272A] overflow-hidden">
                 {Array.from(new Set(violations.map((v) => v.file_path))).map((file) => {
                   const fileViolations = violations.filter((v) => v.file_path === file);
                   return (
                     <div
                       key={file}
-                      className="px-5 py-3 border-b border-gray-50 last:border-0 flex items-center justify-between"
+                      className="px-5 py-3 border-b border-[#27272A] last:border-0 flex items-center justify-between"
                     >
-                      <span className="text-[13px] font-mono text-gray-700 truncate">{file}</span>
-                      <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-[#FCEBEB] text-[#A32D2D] flex-shrink-0">
+                      <span className="text-[13px] font-mono text-[#D4D4D8] truncate">{file}</span>
+                      <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-[#2D1515] text-[#F87171] flex-shrink-0">
                         {fileViolations.length} issue{fileViolations.length !== 1 ? "s" : ""}
                       </span>
                     </div>
@@ -183,12 +181,12 @@ export default function PRAnalysisPage({ params }: PageProps) {
 
             {/* Right: violation cards */}
             <div className="w-[380px] flex-shrink-0">
-              <h2 className="text-[15px] font-medium text-gray-900 mb-3">
+              <h2 className="text-[15px] font-medium text-[#FAFAFA] mb-3">
                 {violations.length} violation{violations.length !== 1 ? "s" : ""} found
               </h2>
               <div className="space-y-3 max-h-[600px] overflow-y-auto pr-1">
                 {sorted.map((v, i) => (
-                  <div key={i} className="bg-white rounded-xl p-4 border border-gray-100">
+                  <div key={i} className="bg-[#18181B] rounded-xl p-4 border border-[#27272A]">
                     <div className="mb-2">
                       <WcagBadge
                         criterion={v.criterion}
@@ -196,16 +194,16 @@ export default function PRAnalysisPage({ params }: PageProps) {
                         level={v.level as "A" | "AA" | "AAA"}
                       />
                     </div>
-                    <p className="text-[13px] text-gray-700 mb-2 leading-relaxed">{v.description}</p>
+                    <p className="text-[13px] text-[#D4D4D8] mb-2 leading-relaxed">{v.description}</p>
                     {v.fix && (
-                      <div className="bg-gray-50 rounded-md p-3">
-                        <p className="text-[11px] text-gray-400 font-medium uppercase mb-1">Fix</p>
-                        <code className="text-[12px] text-gray-700 whitespace-pre-wrap break-all">
+                      <div className="bg-[#0F0F12] rounded-md p-3">
+                        <p className="text-[11px] text-[#52525B] font-medium uppercase mb-1">Fix</p>
+                        <code className="text-[12px] text-[#A89FF5] whitespace-pre-wrap break-all">
                           {v.fix}
                         </code>
                       </div>
                     )}
-                    <p className="text-[11px] text-gray-400 mt-2 font-mono truncate">
+                    <p className="text-[11px] text-[#52525B] mt-2 font-mono truncate">
                       {v.file_path}
                       {v.line_number ? `:${v.line_number}` : ""}
                     </p>
@@ -217,7 +215,7 @@ export default function PRAnalysisPage({ params }: PageProps) {
         )}
 
         {!isAnalyzing && violations.length === 0 && !error && (
-          <div className="text-center py-16 text-[14px] text-gray-400">
+          <div className="text-center py-16 text-[14px] text-[#52525B]">
             Enter your PR details above and click Analyze PR to get started.
           </div>
         )}

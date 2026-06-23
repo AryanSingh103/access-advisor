@@ -37,24 +37,24 @@ function FeatureIcon({ children }: { children: React.ReactNode }) {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#F8F8FB] font-sans">
+    <div className="min-h-screen bg-[#0F0F12] font-sans">
       {/* Nav */}
-      <nav className="flex items-center justify-between px-8 py-4 bg-white border-b border-gray-100">
+      <nav className="flex items-center justify-between px-8 py-4 bg-[#18181B] border-b border-[#27272A]">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-[22px] h-[22px] rounded-[5px] bg-[#534AB7] flex items-center justify-center text-white">
             <AccessibilityIcon />
           </div>
-          <span className="text-[15px] font-medium text-gray-900">AccessAdvisor</span>
+          <span className="text-[15px] font-medium text-[#FAFAFA]">AccessAdvisor</span>
         </Link>
 
-        <div className="flex items-center gap-6 text-[14px] text-gray-600">
-          <a href="#how-it-works" className="hover:text-[#534AB7] transition-colors">
+        <div className="flex items-center gap-6 text-[14px] text-[#A1A1AA]">
+          <a href="#how-it-works" className="hover:text-[#A89FF5] transition-colors">
             How it works
           </a>
-          <a href="#docs" className="hover:text-[#534AB7] transition-colors">
+          <a href="#docs" className="hover:text-[#A89FF5] transition-colors">
             Docs
           </a>
-          <a href="#pricing" className="hover:text-[#534AB7] transition-colors">
+          <a href="#pricing" className="hover:text-[#A89FF5] transition-colors">
             Pricing
           </a>
         </div>
@@ -62,13 +62,13 @@ export default function LandingPage() {
         <div className="flex items-center gap-3">
           <Link
             href="/api/auth/signin"
-            className="text-[14px] text-gray-600 hover:text-[#534AB7] transition-colors"
+            className="text-[14px] text-[#A1A1AA] hover:text-[#A89FF5] transition-colors"
           >
             Sign in
           </Link>
           <Link
             href="/api/auth/signin"
-            className="px-4 py-1.5 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#3C3489] transition-colors"
+            className="px-4 py-1.5 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#6358C5] transition-colors"
           >
             Get started
           </Link>
@@ -77,16 +77,16 @@ export default function LandingPage() {
 
       {/* Hero */}
       <main className="flex flex-col items-center text-center px-8 pt-20 pb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EEEDFE] text-[#3C3489] text-[13px] font-medium mb-6">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1E1B3A] text-[#A89FF5] text-[13px] font-medium mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-[#534AB7] inline-block" />
           RAG-powered · WCAG 2.1 grounded
         </div>
 
-        <h1 className="text-[34px] font-medium text-gray-900 leading-tight max-w-2xl mb-4">
+        <h1 className="text-[34px] font-medium text-[#FAFAFA] leading-tight max-w-2xl mb-4">
           Catch accessibility issues before they ship
         </h1>
 
-        <p className="text-[15px] text-gray-500 max-w-xl leading-relaxed mb-8">
+        <p className="text-[15px] text-[#71717A] max-w-xl leading-relaxed mb-8">
           AccessAdvisor reviews your GitHub pull requests and live URLs against the official
           WCAG 2.1 specification — citing exact criteria, not guesses. Every violation comes
           with a concrete fix.
@@ -95,67 +95,63 @@ export default function LandingPage() {
         <div className="flex items-center gap-4">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#3C3489] transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#6358C5] transition-colors"
           >
             <GitHubIcon />
             Connect GitHub repo
           </Link>
-          <span className="text-[13px] text-gray-400">or</span>
+          <span className="text-[13px] text-[#52525B]">or</span>
           <Link
             href="/scan"
-            className="px-5 py-2.5 rounded-md border border-[#534AB7] text-[#534AB7] text-[14px] font-medium hover:bg-[#EEEDFE] transition-colors"
+            className="px-5 py-2.5 rounded-md border border-[#534AB7] text-[#A89FF5] text-[14px] font-medium hover:bg-[#1E1B3A] transition-colors"
           >
             Scan a URL instead
           </Link>
         </div>
       </main>
 
-      {/* Feature row */}
-      <section
-        id="how-it-works"
-        className="max-w-4xl mx-auto px-8 pb-20 grid grid-cols-3 gap-8"
-      >
-        <div className="bg-white rounded-xl p-6 border border-gray-100">
-          <FeatureIcon>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22" />
-            </svg>
-          </FeatureIcon>
-          <h3 className="text-[15px] font-medium text-gray-900 mb-1">PR reviews, automatically</h3>
-          <p className="text-[14px] text-gray-500 leading-relaxed">
-            Connect a repo and AccessAdvisor posts inline comments on accessibility issues
-            directly in your pull request.
-          </p>
-        </div>
+      {/* How it works */}
+      <section id="how-it-works" className="max-w-4xl mx-auto px-8 pb-24">
+        <h2 className="text-[18px] font-medium text-[#FAFAFA] text-center mb-10">How it works</h2>
+        <div className="grid grid-cols-3 gap-6">
+          <div className="bg-[#18181B] rounded-xl p-6 border border-[#27272A]">
+            <div className="w-7 h-7 rounded-full bg-[#534AB7] flex items-center justify-center text-white text-[13px] font-medium mb-4">
+              1
+            </div>
+            <h3 className="text-[15px] font-medium text-[#FAFAFA] mb-2">
+              Connect your repo or paste a URL
+            </h3>
+            <p className="text-[14px] text-[#71717A] leading-relaxed">
+              Link a GitHub repo for PR reviews and full repo audits, or drop in any live URL
+              for instant scanning.
+            </p>
+          </div>
 
-        <div className="bg-white rounded-xl p-6 border border-gray-100">
-          <FeatureIcon>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-              <line x1="16" y1="13" x2="8" y2="13" />
-              <line x1="16" y1="17" x2="8" y2="17" />
-            </svg>
-          </FeatureIcon>
-          <h3 className="text-[15px] font-medium text-gray-900 mb-1">Cited, not guessed</h3>
-          <p className="text-[14px] text-gray-500 leading-relaxed">
-            Every violation is grounded in retrieved WCAG 2.1 specification excerpts — no
-            hallucinated criteria, no invented rules.
-          </p>
-        </div>
+          <div className="bg-[#18181B] rounded-xl p-6 border border-[#27272A]">
+            <div className="w-7 h-7 rounded-full bg-[#534AB7] flex items-center justify-center text-white text-[13px] font-medium mb-4">
+              2
+            </div>
+            <h3 className="text-[15px] font-medium text-[#FAFAFA] mb-2">
+              RAG pipeline retrieves WCAG 2.1 criteria
+            </h3>
+            <p className="text-[14px] text-[#71717A] leading-relaxed">
+              Your code or page is matched against the real WCAG 2.1 specification using
+              semantic search — no guessing, only cited standards.
+            </p>
+          </div>
 
-        <div className="bg-white rounded-xl p-6 border border-gray-100">
-          <FeatureIcon>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </FeatureIcon>
-          <h3 className="text-[15px] font-medium text-gray-900 mb-1">Scan any live URL</h3>
-          <p className="text-[14px] text-gray-500 leading-relaxed">
-            Paste any URL and get a full accessibility audit streamed back in real time — no
-            repo required.
-          </p>
+          <div className="bg-[#18181B] rounded-xl p-6 border border-[#27272A]">
+            <div className="w-7 h-7 rounded-full bg-[#534AB7] flex items-center justify-center text-white text-[13px] font-medium mb-4">
+              3
+            </div>
+            <h3 className="text-[15px] font-medium text-[#FAFAFA] mb-2">
+              Violations stream back with exact fixes
+            </h3>
+            <p className="text-[14px] text-[#71717A] leading-relaxed">
+              Every issue is labeled with its criterion number, level (A/AA/AAA), and a
+              specific line-level fix you can apply immediately.
+            </p>
+          </div>
         </div>
       </section>
     </div>
