@@ -33,8 +33,9 @@ async def health() -> dict:
     return {"status": "ok", "service": "AccessAdvisor API"}
 
 
-from routers import analyze, github, scanner  # noqa: E402
+from routers import analyze, github, scanner, repo_scan  # noqa: E402
 
 app.include_router(analyze.router, prefix="/api")
 app.include_router(github.router, prefix="/api/github")
 app.include_router(scanner.router, prefix="/api")
+app.include_router(repo_scan.router, prefix="/api")
