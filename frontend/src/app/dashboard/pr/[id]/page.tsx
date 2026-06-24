@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useSession, signIn } from "next-auth/react";
 import { WcagBadge } from "@/components/WcagBadge";
 import { analyzePR, postComments } from "@/lib/api";
 import type { Violation } from "@/lib/api";
@@ -28,11 +29,17 @@ export default function PRAnalysisPage({ params }: PageProps) {
   const [error, setError] = useState<string | null>(null);
   const [repo, setRepo] = useState("");
   const [prNumber, setPrNumber] = useState("");
-  const [githubToken, setGithubToken] = useState("");
+
+  const { data: session, status } = useSession();
+  const githubToken = session?.accessToken ?? "";
 
   const handleAnalyze = async () => {
-    if (!repo || !prNumber || !githubToken) {
-      setError("Please fill in all fields.");
+    if (!githubToken) {
+      setError("Please sign in with GitHub first.");
+      return;
+    }
+    if (!repo || !prNumber) {
+      setError("Please enter a repository and PR number.");
       return;
     }
     setIsAnalyzing(true);
@@ -115,37 +122,47 @@ export default function PRAnalysisPage({ params }: PageProps) {
         {/* Input form */}
         <div className="bg-[#18181B] rounded-xl p-5 border border-[#27272A] mb-6">
           <h2 className="text-[15px] font-medium text-[#FAFAFA] mb-3">PR details</h2>
-          <div className="grid grid-cols-3 gap-3 mb-3">
-            <input
-              type="text"
-              placeholder="owner/repo"
-              value={repo}
-              onChange={(e) => setRepo(e.target.value)}
-              className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
-            />
-            <input
-              type="number"
-              placeholder="PR number"
-              value={prNumber}
-              onChange={(e) => setPrNumber(e.target.value)}
-              className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
-            />
-            <input
-              type="password"
-              placeholder="GitHub token (repo scope)"
-              value={githubToken}
-              onChange={(e) => setGithubToken(e.target.value)}
-              className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
-            />
-          </div>
-          <button
-            onClick={handleAnalyze}
-            disabled={isAnalyzing}
-            className="px-5 py-2 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#6358C5] transition-colors disabled:opacity-50"
-          >
-            {isAnalyzing ? "Analyzing..." : "Analyze PR"}
-          </button>
-          {error && <p className="mt-2 text-[13px] text-[#F87171]">{error}</p>}
+
+          {status === "unauthenticated" ? (
+            <div className="flex items-center justify-between gap-4 rounded-md bg-[#1E1B3A] px-4 py-3">
+              <p className="text-[13px] text-[#A89FF5]">
+                Sign in with GitHub to analyze pull requests and post review comments.
+              </p>
+              <button
+                onClick={() => signIn("github")}
+                className="px-4 py-2 rounded-md bg-[#534AB7] text-white text-[13px] font-medium hover:bg-[#6358C5] transition-colors whitespace-nowrap"
+              >
+                Sign in with GitHub
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <input
+                  type="text"
+                  placeholder="owner/repo"
+                  value={repo}
+                  onChange={(e) => setRepo(e.target.value)}
+                  className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
+                />
+                <input
+                  type="number"
+                  placeholder="PR number"
+                  value={prNumber}
+                  onChange={(e) => setPrNumber(e.target.value)}
+                  className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
+                />
+              </div>
+              <button
+                onClick={handleAnalyze}
+                disabled={isAnalyzing || status === "loading"}
+                className="px-5 py-2 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#6358C5] transition-colors disabled:opacity-50"
+              >
+                {isAnalyzing ? "Analyzing..." : "Analyze PR"}
+              </button>
+              {error && <p className="mt-2 text-[13px] text-[#F87171]">{error}</p>}
+            </>
+          )}
         </div>
 
         {isAnalyzing && (
