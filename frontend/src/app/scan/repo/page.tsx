@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useSession, signIn } from "next-auth/react";
 import { WcagBadge } from "@/components/WcagBadge";
 import { scanRepo } from "@/lib/api";
 import type { Violation, RepoScanEvent } from "@/lib/api";
@@ -51,7 +52,8 @@ function buildReport(results: FileResult[]): string {
 
 export default function RepoScanPage() {
   const [repo, setRepo] = useState("");
-  const [token, setToken] = useState("");
+  const { data: session, status } = useSession();
+  const token = session?.accessToken ?? "";
   const [isScanning, setIsScanning] = useState(false);
   const [currentFile, setCurrentFile] = useState<string | null>(null);
   const [progress, setProgress] = useState<{ index: number; total: number } | null>(null);
@@ -61,7 +63,11 @@ export default function RepoScanPage() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const handleScan = async () => {
-    if (!repo.trim() || !token.trim()) return;
+    if (!token) {
+      setError("Please sign in with GitHub first.");
+      return;
+    }
+    if (!repo.trim()) return;
     setIsScanning(true);
     setResults([]);
     setDone(false);
@@ -148,29 +154,38 @@ export default function RepoScanPage() {
 
         {/* Form */}
         <div className="bg-[#18181B] rounded-xl p-5 border border-[#27272A] mb-8">
-          <div className="flex gap-3 mb-3">
-            <input
-              type="text"
-              placeholder="owner/repo"
-              value={repo}
-              onChange={(e) => setRepo(e.target.value)}
-              className="flex-1 px-4 py-3 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-lg focus:outline-none focus:border-[#534AB7]"
-            />
-            <input
-              type="password"
-              placeholder="GitHub token (repo scope)"
-              value={token}
-              onChange={(e) => setToken(e.target.value)}
-              className="flex-1 px-4 py-3 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-lg focus:outline-none focus:border-[#534AB7]"
-            />
-          </div>
-          <button
-            onClick={handleScan}
-            disabled={isScanning || !repo.trim() || !token.trim()}
-            className="px-6 py-2.5 rounded-lg bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#6358C5] transition-colors disabled:opacity-50"
-          >
-            {isScanning ? "Scanning..." : "Scan Repo"}
-          </button>
+          {status === "unauthenticated" ? (
+            <div className="flex items-center justify-between gap-4 rounded-lg bg-[#1E1B3A] px-4 py-3">
+              <p className="text-[13px] text-[#A89FF5]">
+                Sign in with GitHub to scan your repositories.
+              </p>
+              <button
+                onClick={() => signIn("github")}
+                className="px-4 py-2 rounded-lg bg-[#534AB7] text-white text-[13px] font-medium hover:bg-[#6358C5] transition-colors whitespace-nowrap"
+              >
+                Sign in with GitHub
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="flex gap-3 mb-3">
+                <input
+                  type="text"
+                  placeholder="owner/repo"
+                  value={repo}
+                  onChange={(e) => setRepo(e.target.value)}
+                  className="flex-1 px-4 py-3 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-lg focus:outline-none focus:border-[#534AB7]"
+                />
+              </div>
+              <button
+                onClick={handleScan}
+                disabled={isScanning || !repo.trim() || status === "loading"}
+                className="px-6 py-2.5 rounded-lg bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#6358C5] transition-colors disabled:opacity-50"
+              >
+                {isScanning ? "Scanning..." : "Scan Repo"}
+              </button>
+            </>
+          )}
         </div>
 
         {/* Progress */}
