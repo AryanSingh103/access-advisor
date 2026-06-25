@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useSession, signOut } from "next-auth/react";
 
 interface Repo {
   name: string;
@@ -93,6 +94,10 @@ export default function DashboardPage() {
   const [prInput, setPrInput] = useState("");
   const [repoInput, setRepoInput] = useState("");
 
+  const { data: session } = useSession();
+  const userName = session?.user?.name ?? session?.user?.email ?? "user";
+  const userInitial = userName.charAt(0).toUpperCase();
+
   return (
     <div className="min-h-screen bg-[#0F0F12] flex flex-col">
       {/* Top bar */}
@@ -103,11 +108,17 @@ export default function DashboardPage() {
           </div>
           <span className="text-[15px] font-medium text-[#FAFAFA]">AccessAdvisor</span>
         </Link>
-        <div className="flex items-center gap-2">
-          <span className="text-[14px] text-[#A1A1AA]">user</span>
+        <div className="flex items-center gap-3">
+          <span className="text-[14px] text-[#A1A1AA]">{userName}</span>
           <div className="w-7 h-7 rounded-full bg-[#1E1B3A] flex items-center justify-center text-[#A89FF5] text-xs font-medium">
-            U
+            {userInitial}
           </div>
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="text-[13px] text-[#A1A1AA] hover:text-[#A89FF5] transition-colors"
+          >
+            Sign out
+          </button>
         </div>
       </header>
 
