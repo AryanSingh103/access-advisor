@@ -14,7 +14,7 @@ from config import settings
 logger = logging.getLogger(__name__)
 
 COLLECTION_NAME = "wcag_docs"
-CHROMA_PATH = "./chroma_db"
+CHROMA_PATH = os.path.join(os.path.dirname(__file__), "..", "chroma_db")
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data")
 
 
