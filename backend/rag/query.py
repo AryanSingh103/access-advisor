@@ -111,7 +111,7 @@ async def analyze_content(content: str, content_type: str) -> AsyncGenerator[str
 
     with client.messages.stream(
         model="claude-sonnet-4-5",
-        max_tokens=2048,
+        max_tokens=4096,
         system=SYSTEM_PROMPT,
         messages=[{"role": "user", "content": user_message}],
     ) as stream:
