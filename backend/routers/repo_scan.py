@@ -6,7 +6,7 @@ from fastapi.responses import StreamingResponse
 from github import Github, GithubException
 from pydantic import BaseModel
 
-from rag.query import analyze_content, has_ui_content
+from rag.query import analyze_content_structured, has_ui_content
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -51,6 +51,13 @@ async def repo_scan(request: RepoScanRequest) -> StreamingResponse:
         files_to_scan = all_files[:MAX_FILES]
         total = len(files_to_scan)
 
+        if len(all_files) > MAX_FILES:
+            yield json.dumps({
+                "type": "truncated",
+                "scanned": MAX_FILES,
+                "skipped": len(all_files) - MAX_FILES,
+            }) + "\n"
+
         if total == 0:
             yield json.dumps({"type": "done", "total_files": 0, "total_violations": 0}) + "\n"
             return
@@ -79,11 +86,8 @@ async def repo_scan(request: RepoScanRequest) -> StreamingResponse:
                     }) + "\n"
                     continue
 
-                full_response = ""
-                async for token in analyze_content(code, "code"):
-                    full_response += token
-
-                violations = _parse_violations(full_response, path)
+                raw_violations = await analyze_content_structured(code, "code")
+                violations = [{"file_path": path, **v} for v in raw_violations]
                 total_violations += len(violations)
 
                 yield json.dumps({
@@ -106,29 +110,4 @@ async def repo_scan(request: RepoScanRequest) -> StreamingResponse:
 
         yield json.dumps({"type": "done", "total_files": total, "total_violations": total_violations}) + "\n"
 
-    return StreamingResponse(generate(), media_type="text/event-stream")
-
-
-import re
-
-_VIOLATION_RE = re.compile(
-    r"\[SC\s*([\d.]+)\s*[-–]\s*([^(]+?)\s*\(Level\s*(A{1,3})\)\]:\s*(.*?)(?=Fix:|$)",
-    re.DOTALL | re.IGNORECASE,
-)
-_FIX_RE = re.compile(r"Fix:\s*(.*?)(?=\[SC|\Z)", re.DOTALL | re.IGNORECASE)
-
-
-def _parse_violations(text: str, file_path: str) -> list[dict]:
-    results = []
-    for match in _VIOLATION_RE.finditer(text):
-        remaining = text[match.end():]
-        fix_match = _FIX_RE.match(remaining)
-        results.append({
-            "file_path": file_path,
-            "criterion": match.group(1).strip(),
-            "criterion_name": match.group(2).strip(),
-            "level": match.group(3).strip(),
-            "description": match.group(4).strip(),
-            "fix": fix_match.group(1).strip() if fix_match else "",
-        })
-    return results
+    return StreamingResponse(generate(), media_type="application/x-ndjson")
