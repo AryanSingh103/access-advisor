@@ -1,7 +1,10 @@
 AccessAdvisor — Prompt 2.0 (the "make it real" session)
 
 Read whatsleft.txt first. Then execute the phases below IN ORDER. Follow the
-CLAUDE.md commit policy strictly: one atomic change = one conventional commit.
+CLAUDE.md commit policy strictly: one atomic change = one conventional commit —
+even the smallest change (a one-line fix, a config tweak, a copy edit) gets its
+own commit. After every commit, immediately git push to GitHub so each commit
+lands on my contribution graph. Never batch pushes.
 After each phase, verify it actually works end-to-end before moving on — do not
 mark a phase done on the strength of a successful compile alone.
 
