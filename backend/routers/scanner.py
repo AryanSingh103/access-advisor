@@ -8,10 +8,19 @@ from fastapi.responses import StreamingResponse
 from playwright.async_api import async_playwright
 from pydantic import BaseModel
 
-from rag.query import analyze_content
+from rag.query import analyze_content_structured
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+MAX_HTML_CHARS = 60_000
+
+_STRIP_TAGS_RE = re.compile(
+    r"<(script|style|svg|noscript)\b[^>]*>.*?</\1>",
+    re.DOTALL | re.IGNORECASE,
+)
+_COMMENT_RE = re.compile(r"<!--.*?-->", re.DOTALL)
+_WHITESPACE_RE = re.compile(r"\n\s*\n+")
 
 
 class ScanRequest(BaseModel):
@@ -24,28 +33,14 @@ def _validate_url(url: str) -> None:
         raise HTTPException(status_code=400, detail="URL must start with http:// or https://")
 
 
-_VIOLATION_RE = re.compile(
-    r"\[SC\s*([\d.]+)\s*[-–]\s*([^(]+?)\s*\(Level\s*(A{1,3})\)\]:\s*(.*?)(?=Fix:|$)",
-    re.DOTALL | re.IGNORECASE,
-)
-_FIX_RE = re.compile(r"Fix:\s*(.*?)(?=\[SC|\Z)", re.DOTALL | re.IGNORECASE)
-
-
-def _parse_violations_from_text(text: str) -> list[dict]:
-    results = []
-    for match in _VIOLATION_RE.finditer(text):
-        remaining = text[match.end():]
-        fix_match = _FIX_RE.match(remaining)
-        results.append(
-            {
-                "criterion": match.group(1).strip(),
-                "criterion_name": match.group(2).strip(),
-                "level": match.group(3).strip(),
-                "description": match.group(4).strip(),
-                "fix": fix_match.group(1).strip() if fix_match else "",
-            }
-        )
-    return results
+def _prepare_html(html: str) -> str:
+    """Strip non-semantic bulk and cap size before sending to the LLM."""
+    html = _STRIP_TAGS_RE.sub("", html)
+    html = _COMMENT_RE.sub("", html)
+    html = _WHITESPACE_RE.sub("\n", html)
+    if len(html) > MAX_HTML_CHARS:
+        html = html[:MAX_HTML_CHARS] + "\n<!-- truncated for analysis -->"
+    return html
 
 
 @router.post("/scan-url")
@@ -53,6 +48,7 @@ async def scan_url(request: ScanRequest) -> StreamingResponse:
     _validate_url(request.url)
 
     async def generate():
+        yield json.dumps({"type": "progress", "stage": "rendering"}) + "\n"
         try:
             async with async_playwright() as pw:
                 browser = await pw.chromium.launch(headless=True)
@@ -62,15 +58,19 @@ async def scan_url(request: ScanRequest) -> StreamingResponse:
                 await browser.close()
         except Exception as exc:
             logger.error("Playwright error: %s", exc)
-            yield json.dumps({"error": f"Failed to render URL: {exc}"}) + "\n"
+            yield json.dumps({"type": "error", "error": f"Failed to render URL: {exc}"}) + "\n"
             return
 
-        full_response = ""
-        async for token in analyze_content(html, "dom"):
-            full_response += token
+        yield json.dumps({"type": "progress", "stage": "analyzing"}) + "\n"
+        try:
+            violations = await analyze_content_structured(_prepare_html(html), "dom")
+        except Exception as exc:
+            logger.error("Analysis error: %s", exc)
+            yield json.dumps({"type": "error", "error": f"Analysis failed: {exc}"}) + "\n"
+            return
 
-        violations = _parse_violations_from_text(full_response)
         for v in violations:
-            yield json.dumps(v) + "\n"
+            yield json.dumps({"type": "violation", **v}) + "\n"
+        yield json.dumps({"type": "done", "total_violations": len(violations)}) + "\n"
 
     return StreamingResponse(generate(), media_type="application/x-ndjson")
