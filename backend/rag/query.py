@@ -5,7 +5,6 @@ import sys
 from typing import AsyncGenerator
 
 import anthropic
-from llama_index.embeddings.openai import OpenAIEmbedding
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 from config import settings
@@ -48,9 +47,6 @@ async def analyze_content(content: str, content_type: str) -> AsyncGenerator[str
     os.environ["ANTHROPIC_API_KEY"] = settings.ANTHROPIC_API_KEY
 
     index = _get_index()
-    embed_model = OpenAIEmbedding(model="text-embedding-3-small")
-    query_embedding = embed_model.get_query_embedding(content)
-
     retriever = index.as_retriever(similarity_top_k=15)
     nodes_with_scores = retriever.retrieve(content)
 
