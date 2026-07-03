@@ -1,0 +1,125 @@
+AccessAdvisor — Prompt 2.0 (the "make it real" session)
+
+Read whatsleft.txt first. Then execute the phases below IN ORDER. Follow the
+CLAUDE.md commit policy strictly: one atomic change = one conventional commit.
+After each phase, verify it actually works end-to-end before moving on — do not
+mark a phase done on the strength of a successful compile alone.
+
+────────────────────────────────────────────────────────
+PHASE 0 — Environment fixes (15 min of quick wins)
+────────────────────────────────────────────────────────
+0a. Create frontend/.env.local by copying NEXTAUTH_SECRET, NEXTAUTH_URL,
+    GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, and NEXT_PUBLIC_BACKEND_URL from the
+    root .env (use a shell one-liner; do not print secret values). NextAuth v5
+    expects AUTH_SECRET — set both AUTH_SECRET and NEXTAUTH_SECRET. Add a
+    frontend/.env.example documenting the required vars, and add .env*.local to
+    .gitignore.
+0b. Make CHROMA_PATH absolute (relative to __file__) in backend/rag/ingest.py so
+    the vector store doesn't depend on the launch directory.
+0c. Delete the dead query_embedding computation in backend/rag/query.py.
+0d. Install the Playwright Chromium browser into the backend's Python environment
+    (playwright install chromium) if not already present.
+0e. Fatten .gitignore (.DS_Store, venv/, .venv/, coverage/, dist/) and delete the
+    stale backend/.gitkeep.
+
+────────────────────────────────────────────────────────
+PHASE 1 — Make the core feature actually work (highest priority)
+────────────────────────────────────────────────────────
+Switch violation extraction from regex-parsing prose to structured output:
+
+1a. In backend/rag/query.py, add a non-streaming analyze function that calls
+    Claude with a tool/JSON schema so it returns violations as structured data:
+    { criterion, criterion_name, level, line_number, description, fix }.
+    For PR diffs, instruct Claude to derive line_number from the @@ hunk headers
+    in the patch (the NEW-file line number). Keep the streaming analyze_content
+    for the /api/analyze endpoint.
+1b. Create backend/rag/parse.py (or similar) as the single home for any shared
+    violation-shaping logic, and delete the three copy-pasted regex parsers in
+    github.py, scanner.py, and repo_scan.py.
+1c. Update /api/github/analyze-pr to use structured output so violations carry
+    real line numbers.
+1d. Fix /api/github/post-comments to actually post: map line_number to the diff
+    correctly, and return which comments failed rather than silently dropping
+    them.
+1e. Update scanner.py and repo_scan.py to use the structured path too. While in
+    scanner.py: strip <script>/<style>/<svg> content and cap the HTML sent to
+    Claude; emit progress events ("rendering", "analyzing") so the UI isn't a
+    blind spinner; fix the media-type labels (NDJSON everywhere =
+    application/x-ndjson).
+1f. Raise max_tokens (4096+) and detect stop_reason == "max_tokens".
+1g. VERIFY end-to-end: start the backend, hit /api/scan-url against a real page
+    (e.g. https://example.com), and confirm structured violations come back.
+    For the PR flow, use the test PR (see "WHAT I NEED FROM YOU") and confirm an
+    inline comment actually appears on GitHub.
+
+────────────────────────────────────────────────────────
+PHASE 2 — Wire up GitHub OAuth (kill the paste-a-token UX)
+────────────────────────────────────────────────────────
+NOTE: frontend/AGENTS.md warns this Next.js version differs from training data —
+read the relevant guides in frontend/node_modules/next/dist/docs/ before writing
+frontend code.
+
+2a. Add a sign-in/sign-out flow: "Sign in with GitHub" button on the landing
+    page, session-aware header (real username + avatar instead of the hardcoded
+    "user / U").
+2b. Request the right OAuth scopes (repo) in the GitHub provider config.
+2c. Pass the session accessToken to analyzePR/postComments/scanRepo — remove all
+    manual "GitHub token" input fields from the UI.
+2d. Protect /dashboard and /scan/repo: redirect unauthenticated users to sign in.
+2e. Fix the dashboard → PR page handoff: the Analyze PR form should carry
+    repo + PR number to /dashboard/pr/... and the page should prefill and
+    auto-run the analysis.
+2f. VERIFY: full clickthrough — sign in with GitHub, analyze a real PR from the
+    dashboard, post a comment, see it on GitHub.
+
+────────────────────────────────────────────────────────
+PHASE 3 — Real dashboard data
+────────────────────────────────────────────────────────
+3a. Replace MOCK_REPOS/MOCK_PRS: fetch the signed-in user's repos and their open
+    PRs from the GitHub API using the session token.
+3b. Replace the hardcoded stats with real numbers (or remove tiles that can't be
+    real yet — no fake data anywhere).
+3c. Remove or implement the dead "History" link and "+ Add repo" button.
+    (A real History page needs persistence — SQLite via a simple table of past
+    scans is enough for v1. Optional this session; if skipped, remove the link.)
+
+────────────────────────────────────────────────────────
+PHASE 4 — Security + tests + CI
+────────────────────────────────────────────────────────
+4a. SSRF guard on /api/scan-url: resolve the hostname, reject private/loopback/
+    link-local/metadata IPs.
+4b. Backend auth: shared secret header between frontend and backend (checked via
+    FastAPI dependency), value in env.
+4c. pytest suite: violation shaping/parsing, has_ui_content (also broaden its
+    regex to cover tables/headings/media/lists/iframe), and route tests with
+    mocked LLM calls.
+4d. GitHub Actions CI: ruff + pytest for backend; eslint + tsc --noEmit + build
+    for frontend.
+4e. Add an MIT LICENSE.
+
+────────────────────────────────────────────────────────
+PHASE 5 — Polish (if time permits)
+────────────────────────────────────────────────────────
+5a. Extract shared <AppHeader>/<Logo> components (currently copy-pasted in 4
+    pages) and a shared ndjsonStream helper in api.ts.
+5b. Fix the app's own accessibility: real <label>s on all inputs, aria-hidden on
+    decorative SVGs, bump #52525B text to pass 4.5:1 contrast, aria-live regions
+    for streaming results, visible focus styles.
+5c. Update CLAUDE.md + README: correct the Next.js version, document
+    playwright install, frontend/.env.local, and first-boot ingest cost.
+
+────────────────────────────────────────────────────────
+WHAT I NEED FROM YOU (the human) — do these before/while prompting
+────────────────────────────────────────────────────────
+1. GitHub OAuth app callback URL: verify at github.com/settings/developers that
+   your OAuth app's callback is exactly
+   http://localhost:3000/api/auth/callback/github (Phase 2 fails silently
+   otherwise).
+2. A test PR: pick or create a repo you own with an open PR that contains an
+   obvious accessibility violation (e.g. an <img> with no alt) — needed to verify
+   Phases 1 and 2 end-to-end. If the gh CLI is authenticated on this machine,
+   Claude can create this for you — just say so.
+3. Stay nearby during Phase 2 verification: the OAuth sign-in click and the
+   GitHub authorize screen need a human in the browser.
+4. (Later, not this session) If you want a live demo: a Vercel account for the
+   frontend and Fly.io/Render for the backend.
