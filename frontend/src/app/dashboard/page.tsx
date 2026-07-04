@@ -1,65 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 
 interface Repo {
+  full_name: string;
   name: string;
-  issueCount: number;
+  open_issues_count: number;
+  updated_at: string;
 }
 
 interface PullRequest {
-  id: string;
   number: number;
   title: string;
-  state: "open" | "merged";
-  filesChanged: number;
-  timeAgo: string;
-  status: "issues" | "warning" | "passed";
-  statusCount?: number;
+  updated_at: string;
+  user: { login: string };
+  draft: boolean;
 }
 
-const MOCK_REPOS: Repo[] = [
-  { name: "acme-corp/web-app", issueCount: 3 },
-  { name: "acme-corp/design-system", issueCount: 0 },
-];
-
-const MOCK_PRS: PullRequest[] = [
-  {
-    id: "1",
-    number: 142,
-    title: "Add new checkout form flow",
-    state: "open",
-    filesChanged: 8,
-    timeAgo: "2 hours ago",
-    status: "issues",
-    statusCount: 3,
-  },
-  {
-    id: "2",
-    number: 141,
-    title: "Refactor navigation component",
-    state: "open",
-    filesChanged: 3,
-    timeAgo: "5 hours ago",
-    status: "warning",
-    statusCount: 1,
-  },
-  {
-    id: "3",
-    number: 140,
-    title: "Update hero section copy",
-    state: "merged",
-    filesChanged: 1,
-    timeAgo: "1 day ago",
-    status: "passed",
-  },
-];
+function timeAgo(iso: string): string {
+  const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+  const units: [number, string][] = [
+    [31536000, "year"],
+    [2592000, "month"],
+    [86400, "day"],
+    [3600, "hour"],
+    [60, "minute"],
+  ];
+  for (const [secs, label] of units) {
+    const count = Math.floor(seconds / secs);
+    if (count >= 1) return `${count} ${label}${count !== 1 ? "s" : ""} ago`;
+  }
+  return "just now";
+}
 
 function AccessibilityIcon() {
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <circle cx="12" cy="5" r="2" />
       <path d="M12 22V12m0 0l-4 4m4-4l4 4" />
       <path d="M8 12H4m12 0h4" />
@@ -67,36 +45,74 @@ function AccessibilityIcon() {
   );
 }
 
-function StatusPill({ status, count }: { status: PullRequest["status"]; count?: number }) {
-  if (status === "issues") {
-    return (
-      <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#2D1515] text-[#F87171]">
-        {count} issue{count !== 1 ? "s" : ""}
-      </span>
-    );
-  }
-  if (status === "warning") {
-    return (
-      <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#2D1F0F] text-[#FBBF24]">
-        {count} warning
-      </span>
-    );
-  }
-  return (
-    <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#0F2D1A] text-[#4ADE80]">
-      Passed
-    </span>
-  );
-}
-
 export default function DashboardPage() {
-  const [selectedRepo, setSelectedRepo] = useState(MOCK_REPOS[0]);
+  const { data: session, status } = useSession();
+  const token = session?.accessToken ?? "";
+  const userName = session?.user?.name ?? session?.user?.email ?? "user";
+  const userInitial = userName.charAt(0).toUpperCase();
+
+  const [repos, setRepos] = useState<Repo[]>([]);
+  const [reposLoading, setReposLoading] = useState(true);
+  const [selectedRepo, setSelectedRepo] = useState<Repo | null>(null);
+  const [prs, setPrs] = useState<PullRequest[]>([]);
+  const [prsLoading, setPrsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [prInput, setPrInput] = useState("");
   const [repoInput, setRepoInput] = useState("");
 
-  const { data: session } = useSession();
-  const userName = session?.user?.name ?? session?.user?.email ?? "user";
-  const userInitial = userName.charAt(0).toUpperCase();
+  useEffect(() => {
+    if (status !== "authenticated" || !token) return;
+    let cancelled = false;
+
+    (async () => {
+      setReposLoading(true);
+      try {
+        const res = await fetch(
+          "https://api.github.com/user/repos?sort=updated&per_page=20",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+        const data = (await res.json()) as Repo[];
+        if (cancelled) return;
+        setRepos(data);
+        if (data.length > 0) setSelectedRepo(data[0]);
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load repos.");
+      } finally {
+        if (!cancelled) setReposLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [status, token]);
+
+  useEffect(() => {
+    if (!selectedRepo || !token) return;
+    let cancelled = false;
+
+    (async () => {
+      setPrsLoading(true);
+      try {
+        const res = await fetch(
+          `https://api.github.com/repos/${selectedRepo.full_name}/pulls?state=open&per_page=20`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+        const data = (await res.json()) as PullRequest[];
+        if (!cancelled) setPrs(data);
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load PRs.");
+      } finally {
+        if (!cancelled) setPrsLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedRepo, token]);
 
   return (
     <div className="min-h-screen bg-[#0F0F12] flex flex-col">
@@ -124,30 +140,28 @@ export default function DashboardPage() {
 
       <div className="flex flex-1">
         {/* Sidebar */}
-        <aside className="w-[200px] bg-[#18181B] border-r border-[#27272A] flex flex-col py-4">
+        <aside className="w-[220px] bg-[#18181B] border-r border-[#27272A] flex flex-col py-4">
           <div className="px-4 mb-2">
             <p className="text-[11px] font-medium text-[#52525B] uppercase tracking-wide mb-2">Repos</p>
-            {MOCK_REPOS.map((repo) => (
+            {reposLoading && (
+              <p className="px-2 py-1.5 text-[13px] text-[#52525B]">Loading repos...</p>
+            )}
+            {!reposLoading && repos.length === 0 && (
+              <p className="px-2 py-1.5 text-[13px] text-[#52525B]">No repos found.</p>
+            )}
+            {repos.map((repo) => (
               <button
-                key={repo.name}
+                key={repo.full_name}
                 onClick={() => setSelectedRepo(repo)}
                 className={`w-full flex items-center justify-between px-2 py-1.5 rounded-md text-left text-[13px] mb-0.5 transition-colors ${
-                  selectedRepo.name === repo.name
+                  selectedRepo?.full_name === repo.full_name
                     ? "bg-[#1E1B3A] text-[#A89FF5] font-medium"
                     : "text-[#A1A1AA] hover:bg-[#27272A]"
                 }`}
               >
-                <span className="truncate">{repo.name.split("/")[1]}</span>
-                {repo.issueCount > 0 && (
-                  <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-[#2D1515] text-[#F87171]">
-                    {repo.issueCount}
-                  </span>
-                )}
+                <span className="truncate">{repo.name}</span>
               </button>
             ))}
-            <button className="w-full text-left px-2 py-1.5 text-[13px] text-[#A89FF5] hover:bg-[#1E1B3A] rounded-md transition-colors mt-1">
-              + Add repo
-            </button>
           </div>
 
           <div className="px-4 mt-4">
@@ -164,29 +178,34 @@ export default function DashboardPage() {
             >
               Repo Scanner
             </Link>
-            <a
-              href="#"
-              className="block px-2 py-1.5 rounded-md text-[13px] text-[#A1A1AA] hover:bg-[#27272A] transition-colors"
-            >
-              History
-            </a>
           </div>
         </aside>
 
         {/* Main content */}
         <main className="flex-1 px-8 py-6 max-w-4xl">
-          <h2 className="text-[18px] font-medium text-[#FAFAFA] mb-4">{selectedRepo.name}</h2>
+          <h2 className="text-[18px] font-medium text-[#FAFAFA] mb-4">
+            {selectedRepo?.full_name ?? "Select a repository"}
+          </h2>
+
+          {error && (
+            <div className="bg-[#2D1515] text-[#F87171] text-[14px] rounded-xl px-4 py-3 mb-6">
+              {error}
+            </div>
+          )}
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4 mb-8">
             {[
-              { label: "PRs reviewed", value: "12" },
-              { label: "Open issues", value: "3" },
-              { label: "Issues fixed", value: "28" },
+              { label: "Repositories", value: reposLoading ? "—" : String(repos.length) },
+              { label: "Open PRs", value: prsLoading || !selectedRepo ? "—" : String(prs.length) },
+              {
+                label: "Last updated",
+                value: selectedRepo ? timeAgo(selectedRepo.updated_at) : "—",
+              },
             ].map((stat) => (
               <div key={stat.label} className="bg-[#18181B] rounded-xl p-4 border border-[#27272A]">
                 <p className="text-[13px] text-[#71717A] mb-1">{stat.label}</p>
-                <p className="text-[24px] font-medium text-[#FAFAFA]">{stat.value}</p>
+                <p className="text-[20px] font-medium text-[#FAFAFA]">{stat.value}</p>
               </div>
             ))}
           </div>
@@ -198,6 +217,7 @@ export default function DashboardPage() {
               <input
                 type="text"
                 placeholder="owner/repo"
+                aria-label="Repository (owner/repo)"
                 value={repoInput}
                 onChange={(e) => setRepoInput(e.target.value)}
                 className="flex-1 px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
@@ -205,6 +225,7 @@ export default function DashboardPage() {
               <input
                 type="number"
                 placeholder="PR number"
+                aria-label="PR number"
                 value={prInput}
                 onChange={(e) => setPrInput(e.target.value)}
                 className="w-32 px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
@@ -223,28 +244,38 @@ export default function DashboardPage() {
 
           {/* PR list */}
           <div>
-            <h3 className="text-[15px] font-medium text-[#FAFAFA] mb-3">Recent pull requests</h3>
+            <h3 className="text-[15px] font-medium text-[#FAFAFA] mb-3">Open pull requests</h3>
+            {prsLoading && (
+              <p className="text-[14px] text-[#52525B] py-4">Loading pull requests...</p>
+            )}
+            {!prsLoading && selectedRepo && prs.length === 0 && (
+              <p className="text-[14px] text-[#52525B] py-4">
+                No open pull requests in {selectedRepo.name}.
+              </p>
+            )}
             <div className="space-y-2">
-              {MOCK_PRS.map((pr) => (
+              {prs.map((pr) => (
                 <Link
-                  key={pr.id}
-                  href={`/dashboard/pr/${pr.id}`}
+                  key={pr.number}
+                  href={`/dashboard/pr/${pr.number}?repo=${encodeURIComponent(selectedRepo?.full_name ?? "")}`}
                   className="flex items-center justify-between bg-[#18181B] rounded-xl px-5 py-4 border border-[#27272A] hover:border-[#534AB7]/50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
-                        pr.state === "open" ? "bg-green-400" : "bg-[#534AB7]"
+                        pr.draft ? "bg-[#71717A]" : "bg-green-400"
                       }`}
                     />
                     <div>
                       <p className="text-[14px] font-medium text-[#FAFAFA]">{pr.title}</p>
                       <p className="text-[13px] text-[#52525B] mt-0.5">
-                        #{pr.number} · {pr.timeAgo} · {pr.filesChanged} files changed
+                        #{pr.number} · {timeAgo(pr.updated_at)} · by {pr.user.login}
                       </p>
                     </div>
                   </div>
-                  <StatusPill status={pr.status} count={pr.statusCount} />
+                  <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#1E1B3A] text-[#A89FF5]">
+                    Analyze
+                  </span>
                 </Link>
               ))}
             </div>
