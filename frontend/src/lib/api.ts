@@ -1,4 +1,11 @@
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000";
+const BACKEND_API_KEY = process.env.NEXT_PUBLIC_BACKEND_API_KEY ?? "";
+
+function apiHeaders(): Record<string, string> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (BACKEND_API_KEY) headers["X-API-Key"] = BACKEND_API_KEY;
+  return headers;
+}
 
 export interface Violation {
   file_path: string;
@@ -31,7 +38,7 @@ export async function* streamAnalysis(
 ): AsyncGenerator<string> {
   const res = await fetch(`${BACKEND_URL}/api/analyze`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: apiHeaders(),
     body: JSON.stringify({ content, content_type: contentType }),
   });
 
@@ -56,7 +63,7 @@ export async function analyzePR(
 ): Promise<AnalyzePRResponse> {
   const res = await fetch(`${BACKEND_URL}/api/github/analyze-pr`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: apiHeaders(),
     body: JSON.stringify({ repo, pr_number: prNumber, github_token: githubToken }),
   });
 
@@ -76,7 +83,7 @@ export async function postComments(
 ): Promise<PostCommentsResponse> {
   const res = await fetch(`${BACKEND_URL}/api/github/post-comments`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: apiHeaders(),
     body: JSON.stringify({
       repo,
       pr_number: prNumber,
@@ -127,7 +134,7 @@ export type ScanUrlEvent =
 export async function* scanUrl(url: string): AsyncGenerator<ScanUrlEvent> {
   const res = await fetch(`${BACKEND_URL}/api/scan-url`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: apiHeaders(),
     body: JSON.stringify({ url }),
   });
 
@@ -158,7 +165,7 @@ export async function* scanRepo(
 ): AsyncGenerator<RepoScanEvent> {
   const res = await fetch(`${BACKEND_URL}/api/repo-scan`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: apiHeaders(),
     body: JSON.stringify({ repo, github_token: githubToken }),
   });
 
