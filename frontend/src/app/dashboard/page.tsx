@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
+import { AppHeader } from "@/components/AppHeader";
 
 interface Repo {
   full_name: string;
@@ -33,16 +34,6 @@ function timeAgo(iso: string): string {
     if (count >= 1) return `${count} ${label}${count !== 1 ? "s" : ""} ago`;
   }
   return "just now";
-}
-
-function AccessibilityIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="5" r="2" />
-      <path d="M12 22V12m0 0l-4 4m4-4l4 4" />
-      <path d="M8 12H4m12 0h4" />
-    </svg>
-  );
 }
 
 export default function DashboardPage() {
@@ -116,17 +107,10 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-[#0F0F12] flex flex-col">
-      {/* Top bar */}
-      <header className="flex items-center justify-between px-6 py-3 bg-[#18181B] border-b border-[#27272A]">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-[22px] h-[22px] rounded-[5px] bg-[#534AB7] flex items-center justify-center text-white">
-            <AccessibilityIcon />
-          </div>
-          <span className="text-[15px] font-medium text-[#FAFAFA]">AccessAdvisor</span>
-        </Link>
+      <AppHeader>
         <div className="flex items-center gap-3">
           <span className="text-[14px] text-[#A1A1AA]">{userName}</span>
-          <div className="w-7 h-7 rounded-full bg-[#1E1B3A] flex items-center justify-center text-[#A89FF5] text-xs font-medium">
+          <div className="w-7 h-7 rounded-full bg-[#1E1B3A] flex items-center justify-center text-[#A89FF5] text-xs font-medium" aria-hidden="true">
             {userInitial}
           </div>
           <button
@@ -136,7 +120,7 @@ export default function DashboardPage() {
             Sign out
           </button>
         </div>
-      </header>
+      </AppHeader>
 
       <div className="flex flex-1">
         {/* Sidebar */}

@@ -2,19 +2,10 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { AppHeader } from "@/components/AppHeader";
 import { WcagBadge } from "@/components/WcagBadge";
 import { scanUrl } from "@/lib/api";
 import type { Violation } from "@/lib/api";
-
-function AccessibilityIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="5" r="2" />
-      <path d="M12 22V12m0 0l-4 4m4-4l4 4" />
-      <path d="M8 12H4m12 0h4" />
-    </svg>
-  );
-}
 
 export default function ScanPage() {
   const [url, setUrl] = useState("");
@@ -59,18 +50,11 @@ export default function ScanPage() {
 
   return (
     <div className="min-h-screen bg-[#0F0F12]">
-      {/* Nav */}
-      <header className="flex items-center justify-between px-6 py-3 bg-[#18181B] border-b border-[#27272A]">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-[22px] h-[22px] rounded-[5px] bg-[#534AB7] flex items-center justify-center text-white">
-            <AccessibilityIcon />
-          </div>
-          <span className="text-[15px] font-medium text-[#FAFAFA]">AccessAdvisor</span>
-        </Link>
+      <AppHeader>
         <Link href="/dashboard" className="text-[14px] text-[#A1A1AA] hover:text-[#A89FF5] transition-colors">
           Dashboard
         </Link>
-      </header>
+      </AppHeader>
 
       <main className="max-w-3xl mx-auto px-8 py-12">
         <h1 className="text-[24px] font-medium text-[#FAFAFA] mb-2">URL Scanner</h1>
