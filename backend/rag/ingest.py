@@ -64,7 +64,6 @@ def get_or_create_index() -> VectorStoreIndex:
     if count > 0:
         logger.info("ChromaDB collection '%s' already has %d chunks — loading existing index", COLLECTION_NAME, count)
         vector_store = ChromaVectorStore(chroma_collection=collection)
-        storage_context = StorageContext.from_defaults(vector_store=vector_store)
         embed_model = OpenAIEmbedding(model="text-embedding-3-small")
         return VectorStoreIndex.from_vector_store(vector_store, embed_model=embed_model)
 
