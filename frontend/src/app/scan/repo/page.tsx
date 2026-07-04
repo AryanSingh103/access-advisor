@@ -160,9 +160,10 @@ export default function RepoScanPage() {
                 <input
                   type="text"
                   placeholder="owner/repo"
+                  aria-label="Repository (owner/repo)"
                   value={repo}
                   onChange={(e) => setRepo(e.target.value)}
-                  className="flex-1 px-4 py-3 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-lg focus:outline-none focus:border-[#534AB7]"
+                  className="flex-1 px-4 py-3 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#71717A] rounded-lg focus:outline-none focus:border-[#534AB7]"
                 />
               </div>
               <button
@@ -178,9 +179,9 @@ export default function RepoScanPage() {
 
         {/* Progress */}
         {isScanning && (
-          <div className="mb-6">
+          <div className="mb-6" aria-live="polite">
             <div className="flex items-center gap-3 text-[14px] text-[#71717A] mb-2">
-              <div className="flex gap-1">
+              <div className="flex gap-1" aria-hidden="true">
                 <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce [animation-delay:-0.3s]" />
                 <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce [animation-delay:-0.15s]" />
                 <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce" />
@@ -192,7 +193,7 @@ export default function RepoScanPage() {
               )}
             </div>
             {currentFile && (
-              <p className="text-[12px] font-mono text-[#52525B] truncate">{currentFile}</p>
+              <p className="text-[12px] font-mono text-[#71717A] truncate">{currentFile}</p>
             )}
             {progress && (
               <div className="mt-2 h-1 bg-[#27272A] rounded-full overflow-hidden">
@@ -253,7 +254,7 @@ export default function RepoScanPage() {
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="text-[13px] font-mono text-[#D4D4D8] truncate">{r.file}</span>
                       {r.skipped && (
-                        <span className="text-[11px] text-[#52525B] flex-shrink-0">skipped</span>
+                        <span className="text-[11px] text-[#71717A] flex-shrink-0">skipped</span>
                       )}
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0 ml-3">
@@ -265,8 +266,9 @@ export default function RepoScanPage() {
                         height="14"
                         viewBox="0 0 24 24"
                         fill="none"
-                        stroke="#52525B"
+                        stroke="#71717A"
                         strokeWidth="2"
+                        aria-hidden="true"
                         className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
                       >
                         <polyline points="6 9 12 15 18 9" />
@@ -291,7 +293,7 @@ export default function RepoScanPage() {
                           <p className="text-[13px] text-[#A1A1AA] leading-relaxed mb-2">{v.description}</p>
                           {v.fix && (
                             <div className="bg-[#0F0F12] rounded-lg p-3">
-                              <p className="text-[10px] text-[#52525B] font-medium uppercase mb-1">Fix</p>
+                              <p className="text-[10px] text-[#71717A] font-medium uppercase mb-1">Fix</p>
                               <code className="text-[12px] text-[#A89FF5] whitespace-pre-wrap break-all">{v.fix}</code>
                             </div>
                           )}
@@ -301,7 +303,7 @@ export default function RepoScanPage() {
                   )}
 
                   {isOpen && count === 0 && !r.skipped && (
-                    <div className="border-t border-[#27272A] px-5 py-3 text-[13px] text-[#52525B]">
+                    <div className="border-t border-[#27272A] px-5 py-3 text-[13px] text-[#71717A]">
                       No violations found in this file.
                     </div>
                   )}

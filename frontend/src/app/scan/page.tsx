@@ -67,10 +67,11 @@ export default function ScanPage() {
           <input
             type="url"
             placeholder="https://example.com"
+            aria-label="URL to scan"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !isScanning && handleScan()}
-            className="flex-1 px-4 py-3 text-[15px] bg-[#18181B] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-xl focus:outline-none focus:border-[#534AB7]"
+            className="flex-1 px-4 py-3 text-[15px] bg-[#18181B] border border-[#27272A] text-[#FAFAFA] placeholder-[#71717A] rounded-xl focus:outline-none focus:border-[#534AB7]"
           />
           <button
             onClick={handleScan}
@@ -83,8 +84,8 @@ export default function ScanPage() {
 
         {/* Loading state */}
         {isScanning && (
-          <div className="flex items-center gap-3 text-[14px] text-[#71717A] mb-6">
-            <div className="flex gap-1">
+          <div aria-live="polite" className="flex items-center gap-3 text-[14px] text-[#71717A] mb-6">
+            <div className="flex gap-1" aria-hidden="true">
               <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce [animation-delay:-0.3s]" />
               <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce [animation-delay:-0.15s]" />
               <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce" />
@@ -112,7 +113,7 @@ export default function ScanPage() {
           <>
             {/* Summary */}
             <div className="bg-[#18181B] rounded-xl p-5 border border-[#27272A] mb-6">
-              <p className="text-[13px] text-[#52525B] mb-1 font-mono truncate">{scannedUrl}</p>
+              <p className="text-[13px] text-[#71717A] mb-1 font-mono truncate">{scannedUrl}</p>
               <div className="flex items-center gap-4 mt-2">
                 <div>
                   <p className="text-[22px] font-medium text-[#FAFAFA]">{violations.length}</p>
@@ -144,7 +145,7 @@ export default function ScanPage() {
                   <p className="text-[14px] text-[#A1A1AA] leading-relaxed mb-3">{v.description}</p>
                   {v.fix && (
                     <div className="bg-[#0F0F12] rounded-lg p-3">
-                      <p className="text-[11px] text-[#52525B] font-medium uppercase mb-1.5">Recommended fix</p>
+                      <p className="text-[11px] text-[#71717A] font-medium uppercase mb-1.5">Recommended fix</p>
                       <code className="text-[12px] text-[#A89FF5] whitespace-pre-wrap break-all">
                         {v.fix}
                       </code>
@@ -159,7 +160,7 @@ export default function ScanPage() {
         {scannedUrl && !isScanning && violations.length === 0 && !error && (
           <div className="text-center py-12">
             <div className="w-10 h-10 rounded-full bg-[#0F2D1A] flex items-center justify-center mx-auto mb-3">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" strokeWidth="2">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ADE80" strokeWidth="2" aria-hidden="true">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>

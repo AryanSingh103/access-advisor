@@ -69,7 +69,7 @@ export default function LandingPage() {
             <GitHubIcon />
             Connect GitHub repo
           </Link>
-          <span className="text-[13px] text-[#52525B]">or</span>
+          <span className="text-[13px] text-[#71717A]">or</span>
           <Link
             href="/scan"
             className="px-5 py-2.5 rounded-md border border-[#534AB7] text-[#A89FF5] text-[14px] font-medium hover:bg-[#1E1B3A] transition-colors"

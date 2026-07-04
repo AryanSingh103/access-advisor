@@ -152,16 +152,18 @@ function PRAnalysisContent({ params }: PageProps) {
                 <input
                   type="text"
                   placeholder="owner/repo"
+                  aria-label="Repository (owner/repo)"
                   value={repo}
                   onChange={(e) => setRepo(e.target.value)}
-                  className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
+                  className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#71717A] rounded-md focus:outline-none focus:border-[#534AB7]"
                 />
                 <input
                   type="number"
                   placeholder="PR number"
+                  aria-label="PR number"
                   value={prNumber}
                   onChange={(e) => setPrNumber(e.target.value)}
-                  className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
+                  className="px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#71717A] rounded-md focus:outline-none focus:border-[#534AB7]"
                 />
               </div>
               <button
@@ -177,8 +179,8 @@ function PRAnalysisContent({ params }: PageProps) {
         </div>
 
         {isAnalyzing && (
-          <div className="flex items-center gap-2 text-[14px] text-[#71717A] mb-4">
-            <div className="w-4 h-4 rounded-full border-2 border-[#534AB7] border-t-transparent animate-spin" />
+          <div aria-live="polite" className="flex items-center gap-2 text-[14px] text-[#71717A] mb-4">
+            <div className="w-4 h-4 rounded-full border-2 border-[#534AB7] border-t-transparent animate-spin" aria-hidden="true" />
             Analyzing PR files against WCAG 2.1...
           </div>
         )}
@@ -225,13 +227,13 @@ function PRAnalysisContent({ params }: PageProps) {
                     <p className="text-[13px] text-[#D4D4D8] mb-2 leading-relaxed">{v.description}</p>
                     {v.fix && (
                       <div className="bg-[#0F0F12] rounded-md p-3">
-                        <p className="text-[11px] text-[#52525B] font-medium uppercase mb-1">Fix</p>
+                        <p className="text-[11px] text-[#71717A] font-medium uppercase mb-1">Fix</p>
                         <code className="text-[12px] text-[#A89FF5] whitespace-pre-wrap break-all">
                           {v.fix}
                         </code>
                       </div>
                     )}
-                    <p className="text-[11px] text-[#52525B] mt-2 font-mono truncate">
+                    <p className="text-[11px] text-[#71717A] mt-2 font-mono truncate">
                       {v.file_path}
                       {v.line_number ? `:${v.line_number}` : ""}
                     </p>
@@ -243,7 +245,7 @@ function PRAnalysisContent({ params }: PageProps) {
         )}
 
         {!isAnalyzing && violations.length === 0 && !error && (
-          <div className="text-center py-16 text-[14px] text-[#52525B]">
+          <div className="text-center py-16 text-[14px] text-[#71717A]">
             Enter your PR details above and click Analyze PR to get started.
           </div>
         )}

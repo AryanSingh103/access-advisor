@@ -126,12 +126,12 @@ export default function DashboardPage() {
         {/* Sidebar */}
         <aside className="w-[220px] bg-[#18181B] border-r border-[#27272A] flex flex-col py-4">
           <div className="px-4 mb-2">
-            <p className="text-[11px] font-medium text-[#52525B] uppercase tracking-wide mb-2">Repos</p>
+            <p className="text-[11px] font-medium text-[#71717A] uppercase tracking-wide mb-2">Repos</p>
             {reposLoading && (
-              <p className="px-2 py-1.5 text-[13px] text-[#52525B]">Loading repos...</p>
+              <p className="px-2 py-1.5 text-[13px] text-[#71717A]">Loading repos...</p>
             )}
             {!reposLoading && repos.length === 0 && (
-              <p className="px-2 py-1.5 text-[13px] text-[#52525B]">No repos found.</p>
+              <p className="px-2 py-1.5 text-[13px] text-[#71717A]">No repos found.</p>
             )}
             {repos.map((repo) => (
               <button
@@ -149,7 +149,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="px-4 mt-4">
-            <p className="text-[11px] font-medium text-[#52525B] uppercase tracking-wide mb-2">Tools</p>
+            <p className="text-[11px] font-medium text-[#71717A] uppercase tracking-wide mb-2">Tools</p>
             <Link
               href="/scan"
               className="block px-2 py-1.5 rounded-md text-[13px] text-[#A1A1AA] hover:bg-[#27272A] transition-colors"
@@ -204,7 +204,7 @@ export default function DashboardPage() {
                 aria-label="Repository (owner/repo)"
                 value={repoInput}
                 onChange={(e) => setRepoInput(e.target.value)}
-                className="flex-1 px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
+                className="flex-1 px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#71717A] rounded-md focus:outline-none focus:border-[#534AB7]"
               />
               <input
                 type="number"
@@ -212,7 +212,7 @@ export default function DashboardPage() {
                 aria-label="PR number"
                 value={prInput}
                 onChange={(e) => setPrInput(e.target.value)}
-                className="w-32 px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
+                className="w-32 px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#71717A] rounded-md focus:outline-none focus:border-[#534AB7]"
               />
               <Link
                 href={`/dashboard/pr/${prInput}?repo=${encodeURIComponent(repoInput)}`}
@@ -230,10 +230,10 @@ export default function DashboardPage() {
           <div>
             <h3 className="text-[15px] font-medium text-[#FAFAFA] mb-3">Open pull requests</h3>
             {prsLoading && (
-              <p className="text-[14px] text-[#52525B] py-4">Loading pull requests...</p>
+              <p className="text-[14px] text-[#71717A] py-4">Loading pull requests...</p>
             )}
             {!prsLoading && selectedRepo && prs.length === 0 && (
-              <p className="text-[14px] text-[#52525B] py-4">
+              <p className="text-[14px] text-[#71717A] py-4">
                 No open pull requests in {selectedRepo.name}.
               </p>
             )}
@@ -252,7 +252,7 @@ export default function DashboardPage() {
                     />
                     <div>
                       <p className="text-[14px] font-medium text-[#FAFAFA]">{pr.title}</p>
-                      <p className="text-[13px] text-[#52525B] mt-0.5">
+                      <p className="text-[13px] text-[#71717A] mt-0.5">
                         #{pr.number} · {timeAgo(pr.updated_at)} · by {pr.user.login}
                       </p>
                     </div>
