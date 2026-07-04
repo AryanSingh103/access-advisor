@@ -19,6 +19,7 @@ function AccessibilityIcon() {
 export default function ScanPage() {
   const [url, setUrl] = useState("");
   const [isScanning, setIsScanning] = useState(false);
+  const [stage, setStage] = useState<"rendering" | "analyzing" | null>(null);
   const [violations, setViolations] = useState<Violation[]>([]);
   const [scannedUrl, setScannedUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -27,23 +28,27 @@ export default function ScanPage() {
     if (!url.trim()) return;
 
     setIsScanning(true);
+    setStage(null);
     setViolations([]);
     setError(null);
     setScannedUrl(url);
 
     try {
-      for await (const violation of scanUrl(url)) {
-        const v = violation as unknown as Record<string, unknown>;
-        if ("error" in v) {
-          setError(v.error as string);
+      for await (const event of scanUrl(url)) {
+        if (event.type === "error") {
+          setError(event.error);
           break;
+        } else if (event.type === "progress") {
+          setStage(event.stage);
+        } else if (event.type === "violation") {
+          setViolations((prev) => [...prev, event]);
         }
-        setViolations((prev) => [...prev, violation]);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Scan failed.");
     } finally {
       setIsScanning(false);
+      setStage(null);
     }
   };
 
@@ -100,7 +105,11 @@ export default function ScanPage() {
               <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce [animation-delay:-0.15s]" />
               <div className="w-2 h-2 rounded-full bg-[#534AB7] animate-bounce" />
             </div>
-            Analyzing page against WCAG 2.1...
+            {stage === "rendering"
+              ? "Rendering page in headless browser..."
+              : stage === "analyzing"
+                ? "Analyzing page against WCAG 2.1..."
+                : "Starting scan..."}
             {violations.length > 0 && (
               <span className="text-[#A89FF5]">{violations.length} found so far</span>
             )}
