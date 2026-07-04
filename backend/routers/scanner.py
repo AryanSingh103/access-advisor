@@ -1,6 +1,8 @@
+import ipaddress
 import json
 import logging
 import re
+import socket
 from urllib.parse import urlparse
 
 from fastapi import APIRouter, HTTPException
@@ -31,6 +33,28 @@ def _validate_url(url: str) -> None:
     parsed = urlparse(url)
     if parsed.scheme not in ("http", "https"):
         raise HTTPException(status_code=400, detail="URL must start with http:// or https://")
+    if not parsed.hostname:
+        raise HTTPException(status_code=400, detail="URL has no hostname")
+
+    try:
+        addr_infos = socket.getaddrinfo(parsed.hostname, None)
+    except socket.gaierror:
+        raise HTTPException(status_code=400, detail="Could not resolve hostname")
+
+    for info in addr_infos:
+        ip = ipaddress.ip_address(info[4][0])
+        if (
+            ip.is_private
+            or ip.is_loopback
+            or ip.is_link_local
+            or ip.is_reserved
+            or ip.is_multicast
+            or ip.is_unspecified
+        ):
+            raise HTTPException(
+                status_code=400,
+                detail="URL resolves to a private or internal address and cannot be scanned",
+            )
 
 
 def _prepare_html(html: str) -> str:
