@@ -148,6 +148,7 @@ export async function* scanUrl(url: string): AsyncGenerator<ScanUrlEvent> {
 export interface RepoScanEvent {
   type: "file_start" | "file_result" | "error" | "done" | "truncated";
   scanned?: number;
+  skipped_count?: number;
   file?: string;
   index?: number;
   total?: number;

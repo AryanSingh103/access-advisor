@@ -55,7 +55,7 @@ async def repo_scan(request: RepoScanRequest) -> StreamingResponse:
             yield json.dumps({
                 "type": "truncated",
                 "scanned": MAX_FILES,
-                "skipped": len(all_files) - MAX_FILES,
+                "skipped_count": len(all_files) - MAX_FILES,
             }) + "\n"
 
         if total == 0:

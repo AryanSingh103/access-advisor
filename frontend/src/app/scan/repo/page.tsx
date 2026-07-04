@@ -51,6 +51,7 @@ export default function RepoScanPage() {
   const [results, setResults] = useState<FileResult[]>([]);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [truncated, setTruncated] = useState<number | null>(null);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const handleScan = async () => {
@@ -63,6 +64,7 @@ export default function RepoScanPage() {
     setResults([]);
     setDone(false);
     setError(null);
+    setTruncated(null);
     setCurrentFile(null);
     setProgress(null);
     setExpanded(new Set());
@@ -91,6 +93,8 @@ export default function RepoScanPage() {
           skipped: event.skipped,
         },
       ]);
+    } else if (event.type === "truncated") {
+      setTruncated(event.skipped_count ?? null);
     } else if (event.type === "error") {
       setError(event.message ?? "Unknown error");
     } else if (event.type === "done") {
@@ -210,6 +214,14 @@ export default function RepoScanPage() {
         {error && (
           <div className="bg-[#2D1515] text-[#F87171] text-[14px] rounded-xl px-4 py-3 mb-6">
             {error}
+          </div>
+        )}
+
+        {/* Truncation notice */}
+        {truncated !== null && (
+          <div className="bg-[#2D1F0F] text-[#FBBF24] text-[14px] rounded-xl px-4 py-3 mb-6" aria-live="polite">
+            Repo has more scannable files than the per-scan limit — {truncated} file
+            {truncated !== 1 ? "s were" : " was"} skipped.
           </div>
         )}
 
