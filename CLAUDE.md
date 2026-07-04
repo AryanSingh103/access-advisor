@@ -15,7 +15,7 @@ AccessAdvisor is a full-stack web application that uses a RAG (Retrieval-Augment
 - PyGithub (GitHub API: fetch PR diffs, post review comments)
 
 **Frontend:**
-- Next.js 14 with App Router, TypeScript strict mode
+- Next.js 16 with App Router, TypeScript strict mode (see frontend/AGENTS.md — APIs differ from older Next.js; consult node_modules/next/dist/docs/)
 - Tailwind CSS + shadcn/ui
 - NextAuth.js v5 with GitHub OAuth
 - Native fetch with ReadableStream for streaming
