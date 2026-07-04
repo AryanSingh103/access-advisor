@@ -111,7 +111,11 @@ export default function RepoScanPage() {
   const toggleExpanded = (file: string) => {
     setExpanded((prev) => {
       const next = new Set(prev);
-      next.has(file) ? next.delete(file) : next.add(file);
+      if (next.has(file)) {
+        next.delete(file);
+      } else {
+        next.add(file);
+      }
       return next;
     });
   };
