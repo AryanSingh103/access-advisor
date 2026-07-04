@@ -31,9 +31,10 @@ AccessAdvisor is a full-stack AI tool that reviews GitHub pull requests, live we
 | Backend | FastAPI + uvicorn (Python 3.11) |
 | URL rendering | Playwright (headless Chromium) |
 | GitHub integration | PyGithub |
-| Frontend | Next.js 14 (App Router), TypeScript |
+| Frontend | Next.js 16 (App Router), TypeScript, React 19 |
 | Styling | Tailwind CSS + shadcn/ui |
 | Auth | NextAuth.js v5 (GitHub OAuth) |
+| Testing / CI | pytest + ruff, GitHub Actions |
 
 ---
 
@@ -76,11 +77,15 @@ QUERY  (per request)
   Prompt: system instructions + WCAG context + input
               │
               ▼
-  Claude claude-sonnet-4-5 streams response (1 call per file)
+  Claude claude-sonnet-4-5 · structured tool-use output (1 call per file)
               │
               ▼
-  [SC X.X.X · Criterion Name · Level A/AA] + fix
+  { criterion, name, level, line_number, description, fix }
 ```
+
+Violation extraction uses **Claude tool use** (a forced `report_violations` tool
+call with a JSON schema), so results are structured data — including real diff
+line numbers for inline PR comments — rather than regex-parsed prose.
 
 Every violation is **traceable** — retrievable back to the exact paragraph in the WCAG 2.1 document it came from.
 
@@ -117,6 +122,31 @@ access-advisor/
         └── lib/
             └── api.ts                # Backend helpers, streaming generators
 ```
+
+---
+
+## 🚀 Setup
+
+```bash
+# Backend (Python 3.11+)
+cd backend
+pip install -r requirements.txt
+playwright install chromium        # required for the URL scanner
+uvicorn main:app --port 8000
+# First boot ingests + embeds the WCAG spec via OpenAI (~650 chunks,
+# takes a few minutes and costs a small embedding fee — one time only).
+
+# Frontend
+cd frontend
+npm install
+cp .env.example .env.local         # fill in secrets — Next.js only reads env from frontend/
+npm run dev
+```
+
+Environment variables are documented in `.env.example` (backend, repo root) and
+`frontend/.env.example` (frontend). You'll need an Anthropic API key, an OpenAI
+API key (embeddings only), and a GitHub OAuth app with callback
+`http://localhost:3000/api/auth/callback/github`.
 
 ---
 
