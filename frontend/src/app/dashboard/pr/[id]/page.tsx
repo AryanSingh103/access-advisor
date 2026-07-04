@@ -74,10 +74,13 @@ function PRAnalysisContent({ params }: PageProps) {
   // Auto-run when arriving from the dashboard with repo + PR prefilled.
   const autoRan = useRef(false);
   useEffect(() => {
-    if (autoRan.current || !repoParam || !prParam) return;
-    if (status !== "authenticated") return;
-    autoRan.current = true;
-    handleAnalyze();
+    if (!repoParam || !prParam || status !== "authenticated") return;
+    const timer = setTimeout(() => {
+      if (autoRan.current) return;
+      autoRan.current = true;
+      handleAnalyze();
+    }, 0);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
