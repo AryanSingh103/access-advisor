@@ -210,8 +210,11 @@ export default function DashboardPage() {
                 className="w-32 px-3 py-2 text-[14px] bg-[#0F0F12] border border-[#27272A] text-[#FAFAFA] placeholder-[#52525B] rounded-md focus:outline-none focus:border-[#534AB7]"
               />
               <Link
-                href={`/dashboard/pr/${repoInput}__${prInput}`}
-                className="px-4 py-2 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#6358C5] transition-colors whitespace-nowrap"
+                href={`/dashboard/pr/${prInput}?repo=${encodeURIComponent(repoInput)}`}
+                aria-disabled={!repoInput.trim() || !prInput.trim()}
+                className={`px-4 py-2 rounded-md bg-[#534AB7] text-white text-[14px] font-medium hover:bg-[#6358C5] transition-colors whitespace-nowrap ${
+                  !repoInput.trim() || !prInput.trim() ? "pointer-events-none opacity-50" : ""
+                }`}
               >
                 Analyze PR
               </Link>
