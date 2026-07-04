@@ -14,8 +14,15 @@ export interface AnalyzePRResponse {
   violations: Violation[];
 }
 
+export interface FailedComment {
+  file_path: string;
+  line_number: number | null;
+  reason: string;
+}
+
 export interface PostCommentsResponse {
   comments_posted: number;
+  failed: FailedComment[];
 }
 
 export async function* streamAnalysis(
@@ -86,17 +93,8 @@ export async function postComments(
   return res.json() as Promise<PostCommentsResponse>;
 }
 
-export async function* scanUrl(url: string): AsyncGenerator<Violation> {
-  const res = await fetch(`${BACKEND_URL}/api/scan-url`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url }),
-  });
-
-  if (!res.ok || !res.body) {
-    throw new Error(`Scan failed: ${res.status}`);
-  }
-
+async function* ndjsonStream<T>(res: Response): AsyncGenerator<T> {
+  if (!res.body) throw new Error("Response has no body");
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
@@ -112,7 +110,7 @@ export async function* scanUrl(url: string): AsyncGenerator<Violation> {
     for (const line of lines) {
       if (!line.trim()) continue;
       try {
-        yield JSON.parse(line) as Violation;
+        yield JSON.parse(line) as T;
       } catch {
         // skip malformed lines
       }
@@ -120,8 +118,29 @@ export async function* scanUrl(url: string): AsyncGenerator<Violation> {
   }
 }
 
+export type ScanUrlEvent =
+  | ({ type: "violation" } & Violation)
+  | { type: "progress"; stage: "rendering" | "analyzing" }
+  | { type: "error"; error: string }
+  | { type: "done"; total_violations: number };
+
+export async function* scanUrl(url: string): AsyncGenerator<ScanUrlEvent> {
+  const res = await fetch(`${BACKEND_URL}/api/scan-url`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ url }),
+  });
+
+  if (!res.ok || !res.body) {
+    throw new Error(`Scan failed: ${res.status}`);
+  }
+
+  yield* ndjsonStream<ScanUrlEvent>(res);
+}
+
 export interface RepoScanEvent {
-  type: "file_start" | "file_result" | "error" | "done";
+  type: "file_start" | "file_result" | "error" | "done" | "truncated";
+  scanned?: number;
   file?: string;
   index?: number;
   total?: number;
@@ -147,25 +166,5 @@ export async function* scanRepo(
     throw new Error(`Repo scan failed: ${res.status}`);
   }
 
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split("\n");
-    buffer = lines.pop() ?? "";
-
-    for (const line of lines) {
-      if (!line.trim()) continue;
-      try {
-        yield JSON.parse(line) as RepoScanEvent;
-      } catch {
-        // skip malformed lines
-      }
-    }
-  }
+  yield* ndjsonStream<RepoScanEvent>(res);
 }
