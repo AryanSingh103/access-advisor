@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, use, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import { WcagBadge } from "@/components/WcagBadge";
 import { analyzePR, postComments } from "@/lib/api";
 import type { Violation } from "@/lib/api";
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 function AccessibilityIcon() {
@@ -22,13 +23,26 @@ function AccessibilityIcon() {
 }
 
 export default function PRAnalysisPage({ params }: PageProps) {
+  return (
+    <Suspense fallback={null}>
+      <PRAnalysisContent params={params} />
+    </Suspense>
+  );
+}
+
+function PRAnalysisContent({ params }: PageProps) {
+  const { id } = use(params);
+  const searchParams = useSearchParams();
+  const repoParam = searchParams.get("repo") ?? "";
+  const prParam = /^\d+$/.test(id) ? id : "";
+
   const [violations, setViolations] = useState<Violation[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isPosting, setIsPosting] = useState(false);
   const [posted, setPosted] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [repo, setRepo] = useState("");
-  const [prNumber, setPrNumber] = useState("");
+  const [repo, setRepo] = useState(repoParam);
+  const [prNumber, setPrNumber] = useState(prParam);
 
   const { data: session, status } = useSession();
   const githubToken = session?.accessToken ?? "";
@@ -56,6 +70,16 @@ export default function PRAnalysisPage({ params }: PageProps) {
       setIsAnalyzing(false);
     }
   };
+
+  // Auto-run when arriving from the dashboard with repo + PR prefilled.
+  const autoRan = useRef(false);
+  useEffect(() => {
+    if (autoRan.current || !repoParam || !prParam) return;
+    if (status !== "authenticated") return;
+    autoRan.current = true;
+    handleAnalyze();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   const handlePostComments = async () => {
     if (!repo || !prNumber || !githubToken || violations.length === 0) return;
