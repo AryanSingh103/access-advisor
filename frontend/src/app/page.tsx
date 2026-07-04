@@ -27,14 +27,6 @@ function GitHubIcon() {
   );
 }
 
-function FeatureIcon({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="w-8 h-8 rounded-lg bg-[#534AB7] flex items-center justify-center text-white mb-3 flex-shrink-0">
-      {children}
-    </div>
-  );
-}
-
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0F0F12] font-sans">
