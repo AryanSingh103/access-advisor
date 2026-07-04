@@ -14,7 +14,10 @@ from rag.parse import VIOLATION_TOOL, violations_from_tool_response
 logger = logging.getLogger(__name__)
 
 _UI_PATTERN = re.compile(
-    r"<div|<button|<img|<input|<a\s|<form|<label|<select|<textarea|jsx|\.tsx",
+    r"<div|<button|<img|<input|<a\s|<form|<label|<select|<textarea"
+    r"|<table|<h[1-6]\b|<video|<audio|<iframe|<ul|<ol|<li\b|<nav|<section"
+    r"|<article|<header|<footer|<main|<dialog|<details|<canvas|<span"
+    r"|jsx|\.tsx",
     re.IGNORECASE,
 )
 
