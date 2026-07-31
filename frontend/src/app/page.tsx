@@ -36,7 +36,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#0F0F12] flex flex-col">
       <AppHeader>
         <div className="flex items-center gap-6">
-          <nav className="flex items-center gap-5" aria-label="Main">
+          <nav className="hidden md:flex items-center gap-5" aria-label="Main">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
