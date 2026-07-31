@@ -315,14 +315,15 @@
   font-family: var(--font-space-grotesk), sans-serif;
   font-size: 15px;
   font-weight: 500;
-  color: #032620;
-  background: linear-gradient(115deg, var(--aa-teal), var(--aa-cyan));
+  color: #ffffff;
+  background: var(--aa-violet);
   overflow: hidden;
   text-decoration: none;
-  transition: box-shadow 0.3s;
+  transition: background 0.3s, box-shadow 0.3s;
 }
 .aa-btn-primary:hover {
-  box-shadow: 0 0 42px rgba(168, 159, 245, 0.45), 0 0 0 1px rgba(168, 159, 245, 0.5);
+  background: var(--aa-cyan);
+  box-shadow: 0 0 42px rgba(168, 159, 245, 0.35), 0 0 0 1px rgba(168, 159, 245, 0.5);
 }
 .aa-btn-primary .aa-shine {
   position: absolute;
