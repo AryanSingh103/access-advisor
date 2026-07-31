@@ -32,7 +32,7 @@ export default function LandingPage() {
             </a>
           </nav>
           <Link
-            href="/api/auth/signin"
+            href="/signin"
             className="px-4 py-2 rounded-md bg-[#534AB7] text-white text-[13px] font-medium hover:bg-[#6358C5] transition-colors whitespace-nowrap"
           >
             Sign in with GitHub
