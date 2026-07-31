@@ -85,6 +85,11 @@
   -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, black 30%, transparent 80%);
 }
 
+.aa-landing > header {
+  position: relative;
+  z-index: 10;
+}
+
 .aa-cursor {
   position: fixed;
   width: 8px;

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import "./landing.css";
+import { AppHeader } from "@/components/AppHeader";
 import { SynapseField } from "@/components/landing/SynapseField";
 import { CursorLight } from "@/components/landing/CursorLight";
 import { LensDemo } from "@/components/landing/LensDemo";
@@ -14,29 +15,30 @@ export default function LandingPage() {
       <div className="aa-grid" aria-hidden="true" />
       <CursorLight />
 
-      <header className="aa-header">
-        <Link href="/" className="aa-logo-pill">
-          <span className="aa-logo-mark" aria-hidden="true" />
-          AccessAdvisor
-        </Link>
-        <nav className="aa-nav" aria-label="Main">
-          <Link href="/dashboard">
-            <span className="aa-idx">01</span>PR Review
+      <AppHeader>
+        <div className="flex items-center gap-6">
+          <nav className="aa-nav" aria-label="Main">
+            <Link href="/dashboard">
+              <span className="aa-idx">01</span>PR Review
+            </Link>
+            <Link href="/scan">
+              <span className="aa-idx">02</span>URL Scan
+            </Link>
+            <Link href="/scan/repo">
+              <span className="aa-idx">03</span>Repo Audit
+            </Link>
+            <a href="#how-it-works">
+              <span className="aa-idx">04</span>How it works
+            </a>
+          </nav>
+          <Link
+            href="/api/auth/signin"
+            className="px-4 py-2 rounded-md bg-[#534AB7] text-white text-[13px] font-medium hover:bg-[#6358C5] transition-colors whitespace-nowrap"
+          >
+            Sign in with GitHub
           </Link>
-          <Link href="/scan">
-            <span className="aa-idx">02</span>URL Scan
-          </Link>
-          <Link href="/scan/repo">
-            <span className="aa-idx">03</span>Repo Audit
-          </Link>
-          <a href="#how-it-works">
-            <span className="aa-idx">04</span>How it works
-          </a>
-        </nav>
-        <Link href="/api/auth/signin" className="aa-ghost-pill">
-          Sign in with GitHub
-        </Link>
-      </header>
+        </div>
+      </AppHeader>
 
       <main className="aa-main">
         <section>
