@@ -69,7 +69,7 @@ export function SynapseField() {
           const b = nodes[j];
           const d = Math.hypot(a.x - b.x, a.y - b.y);
           if (d < LINK) {
-            ctx.strokeStyle = `rgba(45, 212, 191, ${(1 - d / LINK) * 0.32})`;
+            ctx.strokeStyle = `rgba(83, 74, 183, ${(1 - d / LINK) * 0.32})`;
             ctx.lineWidth = 0.6;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -79,7 +79,7 @@ export function SynapseField() {
         }
       }
       for (const n of nodes) {
-        ctx.fillStyle = "rgba(140, 235, 220, 0.7)";
+        ctx.fillStyle = "rgba(168, 159, 245, 0.7)";
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
         ctx.fill();
