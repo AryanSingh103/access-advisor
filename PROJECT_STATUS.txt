@@ -1,0 +1,76 @@
+ACCESSADVISOR — PROJECT STATUS
+Checked: 2026-07-30
+
+Both servers were already running in the background when checked (backend since
+Jul 3, frontend since Jun 20) — this is a live snapshot of that running app, not
+a cold-start guess.
+
+
+WORKS (verified live)
+----------------------
+[x] Backend server boots and responds — GET /health -> 200 {"status":"ok"}
+[x] Frontend dev server boots and serves the landing page (title "AccessAdvisor")
+[x] Backend test suite — 43/43 passing (pytest)
+[x] Backend lint — ruff check: all clean
+[x] Frontend type check — tsc --noEmit: no errors
+[x] Frontend lint — eslint: no errors
+[x] ChromaDB vector store — collection "wcag_docs" present, 650 chunks loaded
+    (correct name, matches the hard requirement in CLAUDE.md)
+[x] POST /api/analyze (content_type=code) — full RAG pipeline end-to-end.
+    Tested with a bare <img src="x.jpg">: got back a correctly cited
+    SC 1.1.1 violation with a working code fix, streamed as SSE.
+[x] POST /api/scan-url — Playwright headless scan end-to-end. Tested against
+    https://example.com, got progress events -> rendering -> analyzing -> done.
+[x] Root .env has all required keys set (non-empty): ANTHROPIC_API_KEY,
+    OPENAI_API_KEY, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, NEXTAUTH_SECRET
+[x] frontend/.env.local present with matching NEXTAUTH/backend URL vars
+
+
+NOT VERIFIED (couldn't test without a real browser OAuth login)
+-----------------------------------------------------------------
+[?] GitHub PR Reviewer — POST /api/github/analyze-pr and /post-comments.
+    Code passes lint/tests and imports cleanly, but both require a real
+    github_token from a logged-in NextAuth session — not something curl can
+    produce. Log in via the browser and try a real PR to confirm end-to-end.
+[?] Repo Scanner — POST /api/repo-scan. Same situation: requires a real
+    GitHub token, structurally fine but not exercised live.
+[?] NextAuth GitHub OAuth login flow itself (the "Sign in with GitHub" button)
+    — not clicked through in a browser this session.
+
+
+KNOWN ISSUES / THINGS TO FIX
+------------------------------
+1. Python environment split — the system `python3` (Homebrew, 3.14.3) has
+   NONE of the backend's dependencies installed (fastapi, llama-index,
+   chromadb, anthropic, openai, playwright, PyGithub all missing). The
+   actually-working install lives under a separate interpreter:
+       /Users/aryan/micromamba/bin/python3   (Python 3.9.21)
+   If you or a future session runs plain `python3` / `pip install -r
+   requirements.txt`, it will look broken even though the real env is fine.
+   Always use the micromamba python3 path (see COMMANDS.txt). Consider
+   documenting this in the backend README or creating a proper venv so this
+   stops being a trap.
+
+2. graphify knowledge graph was never finished for this repo. graphify-out/
+   only has partial cache files (AST + chunk scratch data) — no graph.json,
+   no GRAPH_REPORT.md, no wiki/. `graphify query/path/explain` will not work
+   until you run a full `graphify` build. graphify-out/ is also currently
+   untracked in git.
+
+3. Uncommitted / untracked changes sitting in the working tree, which
+   conflicts with this project's stated "commit after every atomic change"
+   policy in CLAUDE.md:
+     - modified: CLAUDE.md
+     - untracked: .claude/
+     - untracked: graphify-out/
+   Worth deciding what should actually be committed vs. gitignored
+   (graphify-out/ in particular looks like local tooling output, not
+   something you'd normally want in the repo).
+
+4. Two stray files at repo root, whatsleft.txt and prompt2.0.txt, each
+   contain only the literal text "hidden." — unclear purpose, likely leftover
+   scratch files. Worth deleting if they're not intentional.
+
+5. BACKEND_API_KEY is unset, so all /api/* routes are currently open with no
+   shared-secret check. Fine for local dev; set it before any real deploy
+   (README already documents this).
