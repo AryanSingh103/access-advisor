@@ -1,0 +1,60 @@
+{
+  "rag": {
+    "arm": "rag",
+    "cases": 30,
+    "total_citations": 34,
+    "citations_per_case": 1.13,
+    "invalid_sc_number": 1,
+    "invalid_sc_number_pct": 2.94,
+    "wrong_name_for_valid_number": 0,
+    "wrong_name_pct": 0.0,
+    "wrong_level_for_valid_number": 0,
+    "wrong_level_pct": 0.0,
+    "fully_correct_citations": 33,
+    "fully_correct_pct": 97.06,
+    "cases_where_expected_sc_reported": 18,
+    "expected_sc_recall_pct": 60.0,
+    "input_tokens_total": 127969,
+    "output_tokens_total": 6035,
+    "input_tokens_per_case": 4265.6,
+    "output_tokens_per_case": 201.2,
+    "mean_latency_s": 9.17,
+    "bad_number_examples": [
+      [
+        "3.3.7",
+        "Accessible Authentication"
+      ]
+    ],
+    "bad_name_examples": [],
+    "bad_level_examples": []
+  },
+  "norag": {
+    "arm": "norag",
+    "cases": 30,
+    "total_citations": 46,
+    "citations_per_case": 1.53,
+    "invalid_sc_number": 0,
+    "invalid_sc_number_pct": 0.0,
+    "wrong_name_for_valid_number": 0,
+    "wrong_name_pct": 0.0,
+    "wrong_level_for_valid_number": 0,
+    "wrong_level_pct": 0.0,
+    "fully_correct_citations": 46,
+    "fully_correct_pct": 100.0,
+    "cases_where_expected_sc_reported": 27,
+    "expected_sc_recall_pct": 90.0,
+    "input_tokens_total": 33467,
+    "output_tokens_total": 7507,
+    "input_tokens_per_case": 1115.6,
+    "output_tokens_per_case": 250.2,
+    "mean_latency_s": 8.84,
+    "bad_number_examples": [],
+    "bad_name_examples": [],
+    "bad_level_examples": []
+  },
+  "grounding_check": {
+    "rag_citations": 34,
+    "cited_number_appears_in_retrieved_chunks": 11,
+    "pct": 32.35
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "pricing": {
+    "model": "claude-sonnet-4-5",
+    "input_per_mtok": 3.0,
+    "output_per_mtok": 15.0,
+    "mean_output_tokens_per_call_measured": 201.2
+  },
+  "per_target": [
+    {
+      "target": "/Users/aryan/Desktop/access-advisor/frontend/src/app/scan/repo/page.tsx",
+      "source_chars": 13098,
+      "source_lines": 331,
+      "batched_calls": 1,
+      "batched_input_tokens": 8645,
+      "per_chunk_calls": 8,
+      "per_chunk_input_tokens": 39929,
+      "per_chunk_input_tokens_each": [
+        5099,
+        4666,
+        5180,
+        4834,
+        5052,
+        4987,
+        5069,
+        5042
+      ],
+      "input_token_ratio": 4.62,
+      "batched_cost_usd": 0.028953,
+      "per_chunk_cost_usd": 0.143931,
+      "cost_ratio": 4.97,
+      "pct_cost_saved_by_batching": 79.88
+    },
+    {
+      "target": "/tmp/aa-filter-eval/taxonomy/app/(marketing)/page.tsx",
+      "source_chars": 14811,
+      "source_lines": 227,
+      "batched_calls": 1,
+      "batched_input_tokens": 10956,
+      "per_chunk_calls": 14,
+      "per_chunk_input_tokens": 68434,
+      "per_chunk_input_tokens_each": [
+        5045,
+        5117,
+        4852,
+        4946,
+        4989,
+        5053,
+        4972,
+        4575,
+        4869,
+        4760,
+        4191,
+        4932,
+        4989,
+        5144
+      ],
+      "input_token_ratio": 6.25,
+      "batched_cost_usd": 0.035886,
+      "per_chunk_cost_usd": 0.247554,
+      "cost_ratio": 6.9,
+      "pct_cost_saved_by_batching": 85.5
+    },
+    {
+      "target": "/tmp/aa-filter-eval/learning-area/accessibility/html/bad-semantics.html",
+      "source_chars": 2942,
+      "source_lines": 24,
+      "batched_calls": 1,
+      "batched_input_tokens": 5179,
+      "per_chunk_calls": 2,
+      "per_chunk_input_tokens": 9501,
+      "per_chunk_input_tokens_each": [
+        4793,
+        4708
+      ],
+      "input_token_ratio": 1.83,
+      "batched_cost_usd": 0.018555,
+      "per_chunk_cost_usd": 0.034539,
+      "cost_ratio": 1.86,
+      "pct_cost_saved_by_batching": 46.28
+    }
+  ]
+}

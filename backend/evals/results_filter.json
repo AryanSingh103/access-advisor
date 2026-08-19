@@ -1,0 +1,82 @@
+{
+  "per_repo": [
+    {
+      "repo": "taxonomy",
+      "total_tracked_files": 188,
+      "after_extension_filter": 94,
+      "after_extension_and_size_filter": 94,
+      "after_ui_content_filter": 70,
+      "pct_removed_by_extension": 50.0,
+      "pct_removed_overall": 62.77,
+      "pct_of_ext_survivors_removed_by_ui_regex": 25.53,
+      "llm_calls_without_any_filter": 188,
+      "llm_calls_with_filters": 70
+    },
+    {
+      "repo": "react-redux-realworld-example-app",
+      "total_tracked_files": 45,
+      "after_extension_filter": 1,
+      "after_extension_and_size_filter": 1,
+      "after_ui_content_filter": 1,
+      "pct_removed_by_extension": 97.78,
+      "pct_removed_overall": 97.78,
+      "pct_of_ext_survivors_removed_by_ui_regex": 0.0,
+      "llm_calls_without_any_filter": 45,
+      "llm_calls_with_filters": 1
+    },
+    {
+      "repo": "learning-area",
+      "total_tracked_files": 815,
+      "after_extension_filter": 413,
+      "after_extension_and_size_filter": 413,
+      "after_ui_content_filter": 384,
+      "pct_removed_by_extension": 49.33,
+      "pct_removed_overall": 52.88,
+      "pct_of_ext_survivors_removed_by_ui_regex": 7.02,
+      "llm_calls_without_any_filter": 815,
+      "llm_calls_with_filters": 384
+    },
+    {
+      "repo": "vue-cli",
+      "total_tracked_files": 1034,
+      "after_extension_filter": 120,
+      "after_extension_and_size_filter": 120,
+      "after_ui_content_filter": 102,
+      "pct_removed_by_extension": 88.39,
+      "pct_removed_overall": 90.14,
+      "pct_of_ext_survivors_removed_by_ui_regex": 15.0,
+      "llm_calls_without_any_filter": 1034,
+      "llm_calls_with_filters": 102
+    },
+    {
+      "repo": "access-advisor",
+      "total_tracked_files": 91,
+      "after_extension_filter": 23,
+      "after_extension_and_size_filter": 21,
+      "after_ui_content_filter": 18,
+      "pct_removed_by_extension": 74.73,
+      "pct_removed_overall": 80.22,
+      "pct_of_ext_survivors_removed_by_ui_regex": 14.29,
+      "llm_calls_without_any_filter": 91,
+      "llm_calls_with_filters": 18
+    }
+  ],
+  "aggregate": {
+    "repos": 5,
+    "allowed_extensions": [
+      ".html",
+      ".jsx",
+      ".svelte",
+      ".tsx",
+      ".vue"
+    ],
+    "max_file_size_bytes": 102400,
+    "total_tracked_files": 2173,
+    "after_extension_filter": 651,
+    "after_extension_and_size_filter": 649,
+    "after_ui_content_filter": 575,
+    "pct_removed_by_extension": 70.04,
+    "pct_removed_overall": 73.54,
+    "pct_of_ext_survivors_removed_by_ui_regex": 11.4
+  }
+}

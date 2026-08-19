@@ -1,0 +1,1564 @@
+[
+  {
+    "id": "img_no_alt",
+    "expected": "1.1.1",
+    "also_acceptable": [],
+    "code": "<img src=\"/logo.png\">",
+    "rag": {
+      "elapsed_s": 3.573,
+      "usage": {
+        "input_tokens": 4517,
+        "output_tokens": 125
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.1.1",
+          "criterion_name": "Non-text Content",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 3.256,
+      "usage": {
+        "input_tokens": 1099,
+        "output_tokens": 132
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.1.1",
+          "criterion_name": "Non-text Content",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9743
+  },
+  {
+    "id": "input_image_no_alt",
+    "expected": "1.1.1",
+    "also_acceptable": [
+      "4.1.2"
+    ],
+    "code": "<input type=\"image\" src=\"/search.png\">",
+    "rag": {
+      "elapsed_s": 13.496,
+      "usage": {
+        "input_tokens": 4516,
+        "output_tokens": 140
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.1.1",
+          "criterion_name": "Non-text Content",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 3.25,
+      "usage": {
+        "input_tokens": 1103,
+        "output_tokens": 142
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.1.1",
+          "criterion_name": "Non-text Content",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9866
+  },
+  {
+    "id": "icon_button_no_name",
+    "expected": "4.1.2",
+    "also_acceptable": [
+      "1.1.1",
+      "2.4.4"
+    ],
+    "code": "<button class=\"icon-btn\"><svg viewBox=\"0 0 16 16\"><path d=\"M1 1h14v14H1z\"/></svg></button>",
+    "rag": {
+      "elapsed_s": 6.934,
+      "usage": {
+        "input_tokens": 4547,
+        "output_tokens": 363
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "1.1.1",
+          "criterion_name": "Non-text Content",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        },
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 10.183,
+      "usage": {
+        "input_tokens": 1131,
+        "output_tokens": 329
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "1.1.1",
+          "criterion_name": "Non-text Content",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 10013
+  },
+  {
+    "id": "video_no_captions",
+    "expected": "1.2.2",
+    "also_acceptable": [
+      "1.2.3",
+      "1.2.5"
+    ],
+    "code": "<video src=\"/promo.mp4\" controls></video>",
+    "rag": {
+      "elapsed_s": 8.716,
+      "usage": {
+        "input_tokens": 4008,
+        "output_tokens": 183
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.2.5",
+          "criterion_name": "Audio Description (Prerecorded)",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 6.087,
+      "usage": {
+        "input_tokens": 1105,
+        "output_tokens": 377
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "1.2.2",
+          "criterion_name": "Captions (Prerecorded)",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "1.2.5",
+          "criterion_name": "Audio Description (Prerecorded)",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 8084
+  },
+  {
+    "id": "audio_no_transcript",
+    "expected": "1.2.1",
+    "also_acceptable": [],
+    "code": "<audio src=\"/podcast-ep1.mp3\" controls></audio>",
+    "rag": {
+      "elapsed_s": 1.881,
+      "usage": {
+        "input_tokens": 4175,
+        "output_tokens": 33
+      },
+      "n_violations": 0,
+      "citations": []
+    },
+    "norag": {
+      "elapsed_s": 13.241,
+      "usage": {
+        "input_tokens": 1107,
+        "output_tokens": 187
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.2.1",
+          "criterion_name": "Audio-only and Video-only (Prerecorded)",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9142
+  },
+  {
+    "id": "input_no_label",
+    "expected": "1.3.1",
+    "also_acceptable": [
+      "3.3.2",
+      "4.1.2"
+    ],
+    "code": "<input type=\"email\" placeholder=\"Email address\" name=\"email\">",
+    "rag": {
+      "elapsed_s": 12.422,
+      "usage": {
+        "input_tokens": 4222,
+        "output_tokens": 243
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "1.3.5",
+          "criterion_name": "Identify Input Purpose",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        },
+        {
+          "criterion": "3.3.2",
+          "criterion_name": "Labels or Instructions",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 7.001,
+      "usage": {
+        "input_tokens": 1106,
+        "output_tokens": 420
+      },
+      "n_violations": 3,
+      "citations": [
+        {
+          "criterion": "1.3.1",
+          "criterion_name": "Info and Relationships",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "3.3.2",
+          "criterion_name": "Labels or Instructions",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9656
+  },
+  {
+    "id": "fake_heading",
+    "expected": "1.3.1",
+    "also_acceptable": [
+      "2.4.6"
+    ],
+    "code": "<div style=\"font-size:32px;font-weight:bold\">Quarterly Results</div>",
+    "rag": {
+      "elapsed_s": 1.841,
+      "usage": {
+        "input_tokens": 4456,
+        "output_tokens": 33
+      },
+      "n_violations": 0,
+      "citations": []
+    },
+    "norag": {
+      "elapsed_s": 3.654,
+      "usage": {
+        "input_tokens": 1114,
+        "output_tokens": 175
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.3.1",
+          "criterion_name": "Info and Relationships",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9544
+  },
+  {
+    "id": "layout_table_no_headers",
+    "expected": "1.3.1",
+    "also_acceptable": [],
+    "code": "<table><tr><td>Name</td><td>Score</td></tr><tr><td>Ada</td><td>99</td></tr></table>",
+    "rag": {
+      "elapsed_s": 1.756,
+      "usage": {
+        "input_tokens": 4570,
+        "output_tokens": 33
+      },
+      "n_violations": 0,
+      "citations": []
+    },
+    "norag": {
+      "elapsed_s": 6.637,
+      "usage": {
+        "input_tokens": 1128,
+        "output_tokens": 170
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.3.1",
+          "criterion_name": "Info and Relationships",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 10171
+  },
+  {
+    "id": "radio_group_no_fieldset",
+    "expected": "1.3.1",
+    "also_acceptable": [
+      "3.3.2"
+    ],
+    "code": "<div><input type=\"radio\" name=\"plan\" value=\"a\"> Basic<input type=\"radio\" name=\"plan\" value=\"b\"> Pro</div>",
+    "rag": {
+      "elapsed_s": 9.919,
+      "usage": {
+        "input_tokens": 4374,
+        "output_tokens": 343
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "1.3.1",
+          "criterion_name": "Info and Relationships",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        },
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 10.652,
+      "usage": {
+        "input_tokens": 1126,
+        "output_tokens": 438
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "1.3.1",
+          "criterion_name": "Info and Relationships",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9931
+  },
+  {
+    "id": "no_autocomplete",
+    "expected": "1.3.5",
+    "also_acceptable": [
+      "1.3.1"
+    ],
+    "code": "<label for=\"fn\">First name</label><input id=\"fn\" type=\"text\" name=\"fname\">",
+    "rag": {
+      "elapsed_s": 15.936,
+      "usage": {
+        "input_tokens": 4236,
+        "output_tokens": 147
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.3.5",
+          "criterion_name": "Identify Input Purpose",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 12.421,
+      "usage": {
+        "input_tokens": 1115,
+        "output_tokens": 33
+      },
+      "n_violations": 0,
+      "citations": []
+    },
+    "retrieved_chunk_chars": 9363
+  },
+  {
+    "id": "low_contrast_text",
+    "expected": "1.4.3",
+    "also_acceptable": [],
+    "code": "<p style=\"color:#bbbbbb;background:#ffffff\">Read our terms and conditions.</p>",
+    "rag": {
+      "elapsed_s": 8.274,
+      "usage": {
+        "input_tokens": 4203,
+        "output_tokens": 189
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.4.3",
+          "criterion_name": "Contrast (Minimum)",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 7.842,
+      "usage": {
+        "input_tokens": 1113,
+        "output_tokens": 176
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.4.3",
+          "criterion_name": "Contrast (Minimum)",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 8434
+  },
+  {
+    "id": "color_only_meaning",
+    "expected": "1.4.1",
+    "also_acceptable": [
+      "1.3.3"
+    ],
+    "code": "<p>Fields marked in <span style=\"color:red\">red</span> are required.</p>",
+    "rag": {
+      "elapsed_s": 12.537,
+      "usage": {
+        "input_tokens": 4304,
+        "output_tokens": 339
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "1.4.1",
+          "criterion_name": "Use of Color",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        },
+        {
+          "criterion": "1.3.1",
+          "criterion_name": "Info and Relationships",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 12.469,
+      "usage": {
+        "input_tokens": 1114,
+        "output_tokens": 208
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.4.1",
+          "criterion_name": "Use of Color",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9370
+  },
+  {
+    "id": "no_zoom_viewport",
+    "expected": "1.4.4",
+    "also_acceptable": [
+      "1.4.10"
+    ],
+    "code": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no\">",
+    "rag": {
+      "elapsed_s": 12.306,
+      "usage": {
+        "input_tokens": 3833,
+        "output_tokens": 222
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.4.10",
+          "criterion_name": "Reflow",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 10.646,
+      "usage": {
+        "input_tokens": 1124,
+        "output_tokens": 153
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.4.4",
+          "criterion_name": "Resize text",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 8525
+  },
+  {
+    "id": "text_in_image",
+    "expected": "1.4.5",
+    "also_acceptable": [
+      "1.1.1"
+    ],
+    "code": "<img src=\"/pricing-table.png\" alt=\"Pricing: Basic $10, Pro $25, Enterprise $99\">",
+    "rag": {
+      "elapsed_s": 1.807,
+      "usage": {
+        "input_tokens": 4534,
+        "output_tokens": 33
+      },
+      "n_violations": 0,
+      "citations": []
+    },
+    "norag": {
+      "elapsed_s": 12.748,
+      "usage": {
+        "input_tokens": 1118,
+        "output_tokens": 232
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "1.1.1",
+          "criterion_name": "Non-text Content",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 10026
+  },
+  {
+    "id": "div_onclick",
+    "expected": "2.1.1",
+    "also_acceptable": [
+      "4.1.2"
+    ],
+    "code": "<div onclick=\"submitForm()\">Submit</div>",
+    "rag": {
+      "elapsed_s": 16.537,
+      "usage": {
+        "input_tokens": 3914,
+        "output_tokens": 331
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "2.1.1",
+          "criterion_name": "Keyboard",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        },
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 10.005,
+      "usage": {
+        "input_tokens": 1103,
+        "output_tokens": 299
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "2.1.1",
+          "criterion_name": "Keyboard",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 8471
+  },
+  {
+    "id": "positive_tabindex",
+    "expected": "2.4.3",
+    "also_acceptable": [
+      "1.3.2"
+    ],
+    "code": "<input tabindex=\"5\" name=\"a\"><input tabindex=\"3\" name=\"b\"><input tabindex=\"9\" name=\"c\">",
+    "rag": {
+      "elapsed_s": 5.817,
+      "usage": {
+        "input_tokens": 4472,
+        "output_tokens": 232
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.4.3",
+          "criterion_name": "Focus Order",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 11.909,
+      "usage": {
+        "input_tokens": 1122,
+        "output_tokens": 205
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.4.3",
+          "criterion_name": "Focus Order",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9877
+  },
+  {
+    "id": "auto_refresh",
+    "expected": "2.2.1",
+    "also_acceptable": [
+      "2.2.4",
+      "3.2.5"
+    ],
+    "code": "<meta http-equiv=\"refresh\" content=\"15\">",
+    "rag": {
+      "elapsed_s": 7.523,
+      "usage": {
+        "input_tokens": 4400,
+        "output_tokens": 409
+      },
+      "n_violations": 3,
+      "citations": [
+        {
+          "criterion": "2.2.1",
+          "criterion_name": "Timing Adjustable",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        },
+        {
+          "criterion": "2.2.2",
+          "criterion_name": "Pause, Stop, Hide",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        },
+        {
+          "criterion": "3.2.5",
+          "criterion_name": "Change on Request",
+          "level": "AAA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 8.127,
+      "usage": {
+        "input_tokens": 1103,
+        "output_tokens": 386
+      },
+      "n_violations": 3,
+      "citations": [
+        {
+          "criterion": "2.2.1",
+          "criterion_name": "Timing Adjustable",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "2.2.4",
+          "criterion_name": "Interruptions",
+          "level": "AAA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "3.2.5",
+          "criterion_name": "Change on Request",
+          "level": "AAA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9125
+  },
+  {
+    "id": "marquee_no_pause",
+    "expected": "2.2.2",
+    "also_acceptable": [],
+    "code": "<marquee>Breaking news: sale ends today!</marquee>",
+    "rag": {
+      "elapsed_s": 12.627,
+      "usage": {
+        "input_tokens": 4401,
+        "output_tokens": 214
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.2.2",
+          "criterion_name": "Pause, Stop, Hide",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 12.551,
+      "usage": {
+        "input_tokens": 1105,
+        "output_tokens": 192
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.2.2",
+          "criterion_name": "Pause, Stop, Hide",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9381
+  },
+  {
+    "id": "flashing_animation",
+    "expected": "2.3.1",
+    "also_acceptable": [],
+    "code": "<div class=\"strobe\" style=\"animation: flash 0.1s infinite alternate\">SALE</div>",
+    "rag": {
+      "elapsed_s": 5.892,
+      "usage": {
+        "input_tokens": 4014,
+        "output_tokens": 260
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.3.1",
+          "criterion_name": "Three Flashes or Below Threshold",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 11.092,
+      "usage": {
+        "input_tokens": 1116,
+        "output_tokens": 176
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.3.1",
+          "criterion_name": "Three Flashes or Below Threshold",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 8409
+  },
+  {
+    "id": "no_skip_link",
+    "expected": "2.4.1",
+    "also_acceptable": [],
+    "code": "<body><nav><a href=\"/a\">A</a><a href=\"/b\">B</a><a href=\"/c\">C</a></nav><main><h1>Docs</h1></main></body>",
+    "rag": {
+      "elapsed_s": 15.445,
+      "usage": {
+        "input_tokens": 4261,
+        "output_tokens": 190
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.4.1",
+          "criterion_name": "Bypass Blocks",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 5.2,
+      "usage": {
+        "input_tokens": 1140,
+        "output_tokens": 33
+      },
+      "n_violations": 0,
+      "citations": []
+    },
+    "retrieved_chunk_chars": 8699
+  },
+  {
+    "id": "no_page_title",
+    "expected": "2.4.2",
+    "also_acceptable": [],
+    "code": "<html lang=\"en\"><head><meta charset=\"utf-8\"></head><body><h1>Report</h1></body></html>",
+    "rag": {
+      "elapsed_s": 5.913,
+      "usage": {
+        "input_tokens": 4201,
+        "output_tokens": 33
+      },
+      "n_violations": 0,
+      "citations": []
+    },
+    "norag": {
+      "elapsed_s": 3.048,
+      "usage": {
+        "input_tokens": 1122,
+        "output_tokens": 137
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.4.2",
+          "criterion_name": "Page Titled",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 7826
+  },
+  {
+    "id": "click_here_link",
+    "expected": "2.4.4",
+    "also_acceptable": [
+      "2.4.9"
+    ],
+    "code": "<p>To read the full accessibility policy, <a href=\"/policy.pdf\">click here</a>.</p>",
+    "rag": {
+      "elapsed_s": 10.771,
+      "usage": {
+        "input_tokens": 4253,
+        "output_tokens": 159
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.4.4",
+          "criterion_name": "Link Purpose (In Context)",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 3.447,
+      "usage": {
+        "input_tokens": 1117,
+        "output_tokens": 161
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.4.4",
+          "criterion_name": "Link Purpose (In Context)",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9877
+  },
+  {
+    "id": "focus_outline_removed",
+    "expected": "2.4.7",
+    "also_acceptable": [],
+    "code": "<style>a:focus, button:focus { outline: none; }</style>",
+    "rag": {
+      "elapsed_s": 4.71,
+      "usage": {
+        "input_tokens": 4570,
+        "output_tokens": 176
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.4.7",
+          "criterion_name": "Focus Visible",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 4.369,
+      "usage": {
+        "input_tokens": 1110,
+        "output_tokens": 171
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "2.4.7",
+          "criterion_name": "Focus Visible",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9876
+  },
+  {
+    "id": "tiny_target",
+    "expected": "2.5.5",
+    "also_acceptable": [],
+    "code": "<a href=\"/x\" style=\"display:inline-block;width:12px;height:12px\">\u00d7</a>",
+    "rag": {
+      "elapsed_s": 15.268,
+      "usage": {
+        "input_tokens": 4093,
+        "output_tokens": 388
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "2.4.4",
+          "criterion_name": "Link Purpose (In Context)",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        },
+        {
+          "criterion": "2.4.9",
+          "criterion_name": "Link Purpose (Link Only)",
+          "level": "AAA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 10.07,
+      "usage": {
+        "input_tokens": 1119,
+        "output_tokens": 420
+      },
+      "n_violations": 3,
+      "citations": [
+        {
+          "criterion": "2.5.5",
+          "criterion_name": "Target Size",
+          "level": "AAA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "1.1.1",
+          "criterion_name": "Non-text Content",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "2.4.4",
+          "criterion_name": "Link Purpose (In Context)",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 7894
+  },
+  {
+    "id": "no_lang_attr",
+    "expected": "3.1.1",
+    "also_acceptable": [],
+    "code": "<html><head><title>Shop</title></head><body><p>Welcome</p></body></html>",
+    "rag": {
+      "elapsed_s": 7.487,
+      "usage": {
+        "input_tokens": 3907,
+        "output_tokens": 33
+      },
+      "n_violations": 0,
+      "citations": []
+    },
+    "norag": {
+      "elapsed_s": 6.292,
+      "usage": {
+        "input_tokens": 1116,
+        "output_tokens": 140
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "3.1.1",
+          "criterion_name": "Language of Page",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 7985
+  },
+  {
+    "id": "no_lang_of_parts",
+    "expected": "3.1.2",
+    "also_acceptable": [],
+    "code": "<html lang=\"en\"><body><p>Our motto is <span>c'est la vie</span>.</p></body></html>",
+    "rag": {
+      "elapsed_s": 7.585,
+      "usage": {
+        "input_tokens": 4101,
+        "output_tokens": 127
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "3.1.1",
+          "criterion_name": "Language of Page",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": true
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 4.241,
+      "usage": {
+        "input_tokens": 1122,
+        "output_tokens": 156
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "3.1.2",
+          "criterion_name": "Language of Parts",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 8691
+  },
+  {
+    "id": "onchange_navigates",
+    "expected": "3.2.2",
+    "also_acceptable": [
+      "3.2.5"
+    ],
+    "code": "<select onchange=\"window.location=this.value\"><option value=\"/a\">A</option><option value=\"/b\">B</option></select>",
+    "rag": {
+      "elapsed_s": 8.941,
+      "usage": {
+        "input_tokens": 4110,
+        "output_tokens": 191
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "3.2.2",
+          "criterion_name": "On Input",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 9.423,
+      "usage": {
+        "input_tokens": 1124,
+        "output_tokens": 235
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "3.2.2",
+          "criterion_name": "On Input",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 8607
+  },
+  {
+    "id": "error_color_only",
+    "expected": "3.3.1",
+    "also_acceptable": [
+      "1.4.1"
+    ],
+    "code": "<input name=\"zip\" class=\"error\" style=\"border-color:red\"><span style=\"color:red\">!</span>",
+    "rag": {
+      "elapsed_s": 8.692,
+      "usage": {
+        "input_tokens": 4361,
+        "output_tokens": 189
+      },
+      "n_violations": 1,
+      "citations": [
+        {
+          "criterion": "3.3.1",
+          "criterion_name": "Error Identification",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 18.11,
+      "usage": {
+        "input_tokens": 1119,
+        "output_tokens": 608
+      },
+      "n_violations": 4,
+      "citations": [
+        {
+          "criterion": "1.3.1",
+          "criterion_name": "Info and Relationships",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "1.4.1",
+          "criterion_name": "Use of Color",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "3.3.1",
+          "criterion_name": "Error Identification",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "4.1.3",
+          "criterion_name": "Status Messages",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 9750
+  },
+  {
+    "id": "required_not_indicated",
+    "expected": "3.3.2",
+    "also_acceptable": [
+      "1.3.1"
+    ],
+    "code": "<form><input type=\"password\" name=\"pw\" required><button>Sign in</button></form>",
+    "rag": {
+      "elapsed_s": 14.884,
+      "usage": {
+        "input_tokens": 3968,
+        "output_tokens": 280
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "3.3.7",
+          "criterion_name": "Accessible Authentication",
+          "level": "AA",
+          "number_is_real_wcag21_sc": false,
+          "name_matches_spec": false,
+          "level_matches_spec": false,
+          "number_present_in_retrieved_context": false
+        },
+        {
+          "criterion": "1.3.5",
+          "criterion_name": "Identify Input Purpose",
+          "level": "AA",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 10.803,
+      "usage": {
+        "input_tokens": 1114,
+        "output_tokens": 423
+      },
+      "n_violations": 3,
+      "citations": [
+        {
+          "criterion": "1.3.1",
+          "criterion_name": "Info and Relationships",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "3.3.2",
+          "criterion_name": "Labels or Instructions",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 8468
+  },
+  {
+    "id": "fake_checkbox",
+    "expected": "4.1.2",
+    "also_acceptable": [
+      "2.1.1"
+    ],
+    "code": "<div class=\"checkbox\" data-checked=\"false\" onclick=\"toggle(this)\"></div>",
+    "rag": {
+      "elapsed_s": 15.533,
+      "usage": {
+        "input_tokens": 4448,
+        "output_tokens": 397
+      },
+      "n_violations": 2,
+      "citations": [
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        },
+        {
+          "criterion": "2.1.1",
+          "criterion_name": "Keyboard",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": false
+        }
+      ]
+    },
+    "norag": {
+      "elapsed_s": 16.321,
+      "usage": {
+        "input_tokens": 1112,
+        "output_tokens": 593
+      },
+      "n_violations": 4,
+      "citations": [
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "4.1.2",
+          "criterion_name": "Name, Role, Value",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        },
+        {
+          "criterion": "2.1.1",
+          "criterion_name": "Keyboard",
+          "level": "A",
+          "number_is_real_wcag21_sc": true,
+          "name_matches_spec": true,
+          "level_matches_spec": true,
+          "number_present_in_retrieved_context": null
+        }
+      ]
+    },
+    "retrieved_chunk_chars": 10410
+  }
+]

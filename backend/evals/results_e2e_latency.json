@@ -1,0 +1,93 @@
+{
+  "n": 10,
+  "retrieval_s": {
+    "mean": 0.326,
+    "median": 0.254,
+    "p95": 0.351,
+    "min": 0.18,
+    "max": 0.958
+  },
+  "generation_s": {
+    "mean": 4.218,
+    "median": 3.997,
+    "p95": 7.244,
+    "min": 1.685,
+    "max": 7.386
+  },
+  "end_to_end_s": {
+    "mean": 4.544,
+    "median": 4.309
+  },
+  "per_case": [
+    {
+      "id": "img_no_alt",
+      "retrieval_s": 0.958,
+      "total_s": 4.686,
+      "generation_s": 2.769,
+      "violations": 1
+    },
+    {
+      "id": "input_image_no_alt",
+      "retrieval_s": 0.273,
+      "total_s": 4.172,
+      "generation_s": 3.626,
+      "violations": 1
+    },
+    {
+      "id": "icon_button_no_name",
+      "retrieval_s": 0.18,
+      "total_s": 7.604,
+      "generation_s": 7.244,
+      "violations": 2
+    },
+    {
+      "id": "video_no_captions",
+      "retrieval_s": 0.351,
+      "total_s": 5.07,
+      "generation_s": 4.368,
+      "violations": 1
+    },
+    {
+      "id": "audio_no_transcript",
+      "retrieval_s": 0.23,
+      "total_s": 2.324,
+      "generation_s": 1.865,
+      "violations": 0
+    },
+    {
+      "id": "input_no_label",
+      "retrieval_s": 0.228,
+      "total_s": 6.1,
+      "generation_s": 5.644,
+      "violations": 2
+    },
+    {
+      "id": "fake_heading",
+      "retrieval_s": 0.254,
+      "total_s": 7.893,
+      "generation_s": 7.386,
+      "violations": 1
+    },
+    {
+      "id": "layout_table_no_headers",
+      "retrieval_s": 0.254,
+      "total_s": 2.602,
+      "generation_s": 2.094,
+      "violations": 0
+    },
+    {
+      "id": "radio_group_no_fieldset",
+      "retrieval_s": 0.245,
+      "total_s": 5.991,
+      "generation_s": 5.502,
+      "violations": 2
+    },
+    {
+      "id": "no_autocomplete",
+      "retrieval_s": 0.284,
+      "total_s": 2.252,
+      "generation_s": 1.685,
+      "violations": 0
+    }
+  ]
+}

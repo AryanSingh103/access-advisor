@@ -1,0 +1,25 @@
+{
+  "repo": "shadcn-ui/ui",
+  "pr": 11484,
+  "files_in_pr": 30,
+  "files_with_patch": 30,
+  "files_after_ui_filter": 1,
+  "pct_files_filtered_out": 96.67,
+  "current_design": {
+    "calls": 1,
+    "input_tokens": 4937,
+    "cost_usd": 0.017829
+  },
+  "per_chunk_same_files": {
+    "calls": 2,
+    "input_tokens": 9330,
+    "cost_usd": 0.034026
+  },
+  "per_chunk_no_filter": {
+    "calls": 72,
+    "input_tokens": 331638,
+    "cost_usd": 1.21221
+  },
+  "saving_vs_per_chunk_same_files_pct": 47.6,
+  "saving_vs_per_chunk_no_filter_pct": 98.53
+}
