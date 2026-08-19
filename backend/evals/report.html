@@ -1,0 +1,844 @@
+<title>AccessAdvisor Metrics Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+
+<style>
+:root {
+  --ground:      #F6F7F9;
+  --surface:     #FFFFFF;
+  --surface-sub: #EFF1F5;
+  --ink:         #14181F;
+  --ink-muted:   #5A6373;
+  --ink-faint:   #8C95A4;
+  --rule:        #DCE0E8;
+  --rule-strong: #BFC6D2;
+  --accent:      #2B4C7E;
+  --accent-soft: #E4EAF3;
+  --holds:       #1B6E52;
+  --holds-soft:  #DCEEE6;
+  --caution:     #8A6008;
+  --caution-soft:#F5EAD2;
+  --fails:       #9C2C2C;
+  --fails-soft:  #F5E0E0;
+
+  --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --sans:  "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono:  "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground:      #101319;
+    --surface:     #171B23;
+    --surface-sub: #1E232C;
+    --ink:         #E4E8EF;
+    --ink-muted:   #98A1B0;
+    --ink-faint:   #6E7889;
+    --rule:        #282E39;
+    --rule-strong: #3A4250;
+    --accent:      #85AADD;
+    --accent-soft: #1C2634;
+    --holds:       #5FC79C;
+    --holds-soft:  #14261F;
+    --caution:     #D8AC55;
+    --caution-soft:#2A2213;
+    --fails:       #E08585;
+    --fails-soft:  #2C1A1A;
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground:      #101319;
+  --surface:     #171B23;
+  --surface-sub: #1E232C;
+  --ink:         #E4E8EF;
+  --ink-muted:   #98A1B0;
+  --ink-faint:   #6E7889;
+  --rule:        #282E39;
+  --rule-strong: #3A4250;
+  --accent:      #85AADD;
+  --accent-soft: #1C2634;
+  --holds:       #5FC79C;
+  --holds-soft:  #14261F;
+  --caution:     #D8AC55;
+  --caution-soft:#2A2213;
+  --fails:       #E08585;
+  --fails-soft:  #2C1A1A;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+/* ---------- masthead ---------- */
+
+.masthead { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0;
+}
+
+h1 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 2.9rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.standfirst {
+  font-size: 1.1rem;
+  line-height: 1.62;
+  color: var(--ink-muted);
+  max-width: 60ch;
+  margin: 0;
+}
+
+.runmeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 2rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--ink-faint);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.85rem 0;
+  margin: 0;
+}
+.runmeta div { display: flex; gap: 0.5rem; }
+.runmeta dt { color: var(--ink-faint); }
+.runmeta dd { margin: 0; color: var(--ink); }
+
+/* ---------- verdict chips ---------- */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.55rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.chip.holds   { background: var(--holds-soft);   color: var(--holds);   }
+.chip.caution { background: var(--caution-soft); color: var(--caution); }
+.chip.fails   { background: var(--fails-soft);   color: var(--fails);   }
+.chip.none    { background: var(--surface-sub);  color: var(--ink-faint); }
+
+/* ---------- verdict board ---------- */
+
+.board {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.board > h2 {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface-sub);
+}
+.board-scroll { overflow-x: auto; }
+
+/* ---------- sections ---------- */
+
+section > h2 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.55rem;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  margin: 0 0 0.4rem;
+  padding-bottom: 0.7rem;
+  border-bottom: 2px solid var(--ink);
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+}
+section > h2 .num {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0;
+}
+.section-lede {
+  color: var(--ink-muted);
+  max-width: 68ch;
+  margin: 1rem 0 0;
+}
+
+section { display: flex; flex-direction: column; gap: 1.5rem; }
+
+/* ---------- finding ---------- */
+
+.finding {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--rule-strong);
+  border-radius: 3px;
+  padding: 1.4rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.finding.holds   { border-left-color: var(--holds);   }
+.finding.caution { border-left-color: var(--caution); }
+.finding.fails   { border-left-color: var(--fails);   }
+.finding.none    { border-left-color: var(--rule-strong); }
+
+.finding-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.finding-head h3 {
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.005em;
+}
+
+.figure {
+  font-family: var(--mono);
+  font-size: clamp(1.6rem, 4vw, 2.1rem);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+.figure .unit { font-size: 0.55em; font-weight: 500; color: var(--ink-muted); }
+.figure-note {
+  font-size: 0.86rem;
+  color: var(--ink-muted);
+  margin: 0.3rem 0 0;
+}
+
+.method {
+  border-top: 1px solid var(--rule);
+  padding-top: 0.9rem;
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 0.55rem 1rem;
+  font-size: 0.9rem;
+}
+.method dt {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding-top: 0.22rem;
+}
+.method dd { margin: 0; color: var(--ink-muted); }
+.method dd strong { color: var(--ink); font-weight: 600; }
+
+@media (max-width: 620px) {
+  .method { grid-template-columns: 1fr; gap: 0.15rem 0; }
+  .method dd { margin-bottom: 0.7rem; }
+}
+
+/* ---------- tables ---------- */
+
+.tscroll { overflow-x: auto; }
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 34rem;
+  font-size: 0.87rem;
+  font-variant-numeric: tabular-nums;
+}
+thead th {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  text-align: right;
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+thead th:first-child { text-align: left; }
+tbody td {
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid var(--rule);
+  text-align: right;
+  white-space: nowrap;
+}
+tbody td:first-child {
+  text-align: left;
+  white-space: normal;
+  color: var(--ink);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody td.num { font-family: var(--mono); }
+tbody tr.total td {
+  border-top: 1px solid var(--rule-strong);
+  font-weight: 600;
+  color: var(--ink);
+}
+.board table tbody td:first-child { font-weight: 500; }
+.board table { min-width: 40rem; }
+
+code, .mono { font-family: var(--mono); font-size: 0.9em; }
+code {
+  background: var(--surface-sub);
+  padding: 0.1em 0.35em;
+  border-radius: 2px;
+  color: var(--ink);
+}
+.finding p code { font-size: 0.85em; }
+
+p { margin: 0; }
+.finding p + p { margin-top: 0.7rem; }
+
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---------- callout ---------- */
+
+.callout {
+  background: var(--accent-soft);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 1.25rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.callout h3 {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+}
+.callout p { color: var(--ink-muted); max-width: 66ch; }
+.callout p strong { color: var(--ink); }
+
+/* ---------- bullets ---------- */
+
+.bullets { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.9rem; }
+.bullets li {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  gap: 0.6rem;
+  align-items: start;
+  font-size: 0.95rem;
+  color: var(--ink-muted);
+}
+.bullets li .marker {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--accent);
+  padding-top: 0.28rem;
+}
+.bullets li strong { color: var(--ink); font-weight: 600; }
+
+footer {
+  border-top: 1px solid var(--rule);
+  padding-top: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--ink-faint);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+</style>
+
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">AccessAdvisor · evidence review</p>
+  <h1>Which AccessAdvisor numbers survive verification</h1>
+  <p class="standfirst">
+    Every figure below was measured on this machine against this repository, with the script
+    and raw output committed alongside it. Where no measurement was possible, the entry says so
+    instead of estimating. Two of the project's headline claims do not survive.
+  </p>
+  <dl class="runmeta">
+    <div><dt>measured</dt><dd>19 Aug 2026</dd></div>
+    <div><dt>commit</dt><dd>058b22a</dd></div>
+    <div><dt>scripts</dt><dd>backend/evals/</dd></div>
+    <div><dt>model</dt><dd>claude-sonnet-4-5</dd></div>
+  </dl>
+</header>
+
+<div class="board">
+  <h2>Verdict board</h2>
+  <div class="board-scroll">
+    <table>
+      <thead>
+        <tr><th>Claim under test</th><th>Measured</th><th>Verdict</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Retrieval grounds findings and cuts hallucinated criteria</td>
+          <td class="num">97.1% vs 100% valid</td>
+          <td><span class="chip fails">Contradicted</span></td>
+        </tr>
+        <tr>
+          <td>Retrieval improves which criteria get caught</td>
+          <td class="num">60% vs 90% recall</td>
+          <td><span class="chip fails">Contradicted</span></td>
+        </tr>
+        <tr>
+          <td>Batching a file into one call beats per-chunk calls</td>
+          <td class="num">46–86% cheaper</td>
+          <td><span class="chip holds">Holds</span></td>
+        </tr>
+        <tr>
+          <td>The non-UI file filter removes most of the work</td>
+          <td class="num">73.5% of files</td>
+          <td><span class="chip holds">Holds</span></td>
+        </tr>
+        <tr>
+          <td>Re-ranking top 15 down to top 6 improves precision</td>
+          <td class="num">0 of 30 reordered</td>
+          <td><span class="chip fails">Contradicted</span></td>
+        </tr>
+        <tr>
+          <td>650 WCAG passages indexed</td>
+          <td class="num">650 exactly</td>
+          <td><span class="chip holds">Holds</span></td>
+        </tr>
+        <tr>
+          <td>78 success criteria covered</td>
+          <td class="num">78 in the 2.1 spec</td>
+          <td><span class="chip caution">Qualified</span></td>
+        </tr>
+        <tr>
+          <td>&ldquo;100% of findings cited&rdquo; (landing page)</td>
+          <td class="num">no basis measured</td>
+          <td><span class="chip fails">Contradicted</span></td>
+        </tr>
+        <tr>
+          <td>Test suite passes</td>
+          <td class="num">43 / 43</td>
+          <td><span class="chip holds">Holds</span></td>
+        </tr>
+        <tr>
+          <td>Tests cover violation-detection accuracy</td>
+          <td class="num">0 of 43 tests</td>
+          <td><span class="chip fails">Contradicted</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="callout">
+  <h3>The headline you cannot use, and why</h3>
+  <p>
+    The README says findings are grounded &ldquo;in the real WCAG 2.1 specification — not in the
+    model's training memory.&rdquo; On a 30-case eval that is measurably false in the direction
+    that matters: <strong>the model already knows WCAG 2.1</strong>. Claude Sonnet 4.5 with no
+    retrieved context at all cited a real, correctly-named, correctly-levelled criterion
+    <strong>100% of the time</strong> and caught the seeded violation in <strong>90%</strong> of
+    cases. Adding retrieval moved those to 97.1% and 60%.
+  </p>
+  <p>
+    The mechanism is visible in the numbers. The system prompt tells the model to report only
+    what the provided context supports — but the correct criterion is present in the six chunks
+    it receives only <strong>23.3%</strong> of the time, so the instruction mostly suppresses
+    correct findings rather than grounding them.
+  </p>
+</div>
+
+<section>
+  <h2><span class="num">§1</span> RAG versus no retrieval</h2>
+  <p class="section-lede">
+    No eval, test set, or manual review existed in the repository — <code>grep</code> for
+    eval/benchmark/baseline across all source returns only prose mentions. One was built for this
+    review: 30 hand-authored snippets, each seeded with a single clear violation, covering 25
+    distinct success criteria. Both arms use the identical model, system prompt, and
+    <code>report_violations</code> tool schema; the only difference is whether the six retrieved
+    WCAG chunks are prepended.
+  </p>
+
+  <div class="finding fails">
+    <div class="finding-head">
+      <h3>Citations naming a real WCAG 2.1 criterion</h3>
+      <span class="chip fails">RAG is worse</span>
+    </div>
+    <div>
+      <div class="figure">97.06<span class="unit">% with RAG</span> &nbsp;·&nbsp; 100<span class="unit">% without</span></div>
+      <p class="figure-note">33 of 34 RAG citations valid; 46 of 46 no-RAG citations valid.</p>
+    </div>
+    <dl class="method">
+      <dt>How</dt>
+      <dd>Every emitted <code>criterion</code> was checked against all 78 WCAG 2.1 success criteria parsed straight out of <code>backend/data/wcag21.html</code>. Name and conformance level were checked too — both matched the spec <strong>100%</strong> of the time in both arms.</dd>
+      <dt>The one miss</dt>
+      <dd>SC 3.3.7 &ldquo;Accessible Authentication&rdquo; — a <strong>WCAG 2.2</strong> criterion, and it came from the retrieval arm. Cause: <code>backend/data/wcag21_quickref.html</code> is the live W3C quickref, which carries 87 criteria including 9 that only exist in 2.2. Retrieval injected out-of-version spec text.</dd>
+      <dt>Verify</dt>
+      <dd><code>run_rag_vs_norag.py</code> → <code>score_rag_eval.py</code>; raw per-citation scoring in <code>results_rag_vs_norag.json</code>.</dd>
+    </dl>
+  </div>
+
+  <div class="finding fails">
+    <div class="finding-head">
+      <h3>Seeded violation actually caught</h3>
+      <span class="chip fails">RAG is worse</span>
+    </div>
+    <div>
+      <div class="figure">60.0<span class="unit">% with RAG</span> &nbsp;·&nbsp; 90.0<span class="unit">% without</span></div>
+      <p class="figure-note">18 of 30 versus 27 of 30. Discordant pairs: 2 caught only with RAG, 11 caught only without.</p>
+    </div>
+    <dl class="method">
+      <dt>Significance</dt>
+      <dd>McNemar exact two-sided <strong>p = 0.022</strong> on 13 discordant pairs. This is not sampling noise at n = 30.</dd>
+      <dt>Grounding</dt>
+      <dd>Only <strong>32.4%</strong> (11 of 34) of RAG-arm citations had their criterion number literally present in the retrieved chunks. The model is answering from parametric knowledge in both arms; retrieval mostly adds a constraint it then obeys too strictly.</dd>
+      <dt>Caveat</dt>
+      <dd>The no-RAG arm inherits a system prompt written for RAG (&ldquo;only report violations supported by the provided context&rdquo;), which is vacuous with no context. That asymmetry <em>favors</em> the no-RAG arm's recall — but it does not explain the valid-citation result, where no-RAG is also ahead.</dd>
+    </dl>
+  </div>
+
+  <div class="finding caution">
+    <div class="finding-head">
+      <h3>False negatives and out-of-scope citations</h3>
+      <span class="chip caution">Soft metric</span>
+    </div>
+    <div class="tscroll">
+      <table>
+        <thead><tr><th>Arm</th><th>Missed seeded SC</th><th>FN rate</th><th>Out-of-scope citations</th><th>FP rate</th></tr></thead>
+        <tbody>
+          <tr><td>With retrieval</td><td class="num">12 / 30</td><td class="num">40.0%</td><td class="num">9 / 34</td><td class="num">26.5%</td></tr>
+          <tr><td>No retrieval</td><td class="num">3 / 30</td><td class="num">10.0%</td><td class="num">6 / 44</td><td class="num">13.6%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <dl class="method">
+      <dt>Read carefully</dt>
+      <dd>The false-negative rate is hard: the seeded criterion was either reported or it was not. The false-positive rate is <strong>soft</strong> — it counts any criterion outside a hand-labelled allow-list, and several &ldquo;out-of-scope&rdquo; calls are defensible (flagging 4.1.2 on an unlabelled radio group, for instance). Do not put the FP number on a résumé without that qualifier.</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">§2</span> Cost optimisation</h2>
+  <p class="section-lede">
+    Input token counts are exact, from Anthropic's <code>/v1/messages/count_tokens</code> endpoint
+    with the real system prompt and tool schema attached. Priced at the published
+    <code>claude-sonnet-4-5</code> rate of $3.00 per MTok input and $15.00 per MTok output. Output
+    tokens use the measured mean of 201.2 per call from the §1 run, multiplied by call count —
+    this is the only modelled quantity on the page and it is labelled as such.
+  </p>
+
+  <div class="finding holds">
+    <div class="finding-head">
+      <h3>One call per file versus one call per chunk</h3>
+      <span class="chip holds">Claim holds</span>
+    </div>
+    <div class="tscroll">
+      <table>
+        <thead>
+          <tr><th>Target</th><th>Lines</th><th>Batched</th><th>Per chunk</th><th>Batched $</th><th>Per chunk $</th><th>Saved</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>frontend scan/repo/page.tsx</td><td class="num">331</td><td class="num">1 call · 8,645 tok</td><td class="num">8 calls · 39,929 tok</td><td class="num">$0.0290</td><td class="num">$0.1439</td><td class="num">79.9%</td></tr>
+          <tr><td>taxonomy marketing page.tsx</td><td class="num">227</td><td class="num">1 call · 10,956 tok</td><td class="num">14 calls · 68,434 tok</td><td class="num">$0.0359</td><td class="num">$0.2476</td><td class="num">85.5%</td></tr>
+          <tr><td>MDN bad-semantics.html</td><td class="num">24</td><td class="num">1 call · 5,179 tok</td><td class="num">2 calls · 9,501 tok</td><td class="num">$0.0186</td><td class="num">$0.0345</td><td class="num">46.3%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <dl class="method">
+      <dt>Why it works</dt>
+      <dd>Each call re-sends the same fixed overhead: system prompt, tool schema, and roughly 3,500 tokens of retrieved WCAG context. Splitting one file into <em>n</em> chunks pays that overhead <em>n</em> times. The saving therefore scales with file size — small files save least.</dd>
+      <dt>Chunking baseline</dt>
+      <dd>The per-chunk arm uses the project's own ingest settings — <code>SentenceSplitter(chunk_size=512, chunk_overlap=50)</code> — so it is a fair &ldquo;naive&rdquo; comparison, not a strawman.</dd>
+      <dt>Verify</dt>
+      <dd><code>run_cost_eval.py</code> → <code>results_cost.json</code>.</dd>
+    </dl>
+  </div>
+
+  <div class="finding holds">
+    <div class="finding-head">
+      <h3>Cost on a real GitHub pull request</h3>
+      <span class="chip holds">Claim holds</span>
+    </div>
+    <div>
+      <div class="figure">98.5<span class="unit">% cheaper</span></div>
+      <p class="figure-note">shadcn-ui/ui #11484 · 30 changed files · current design $0.0178 versus $1.2122 unfiltered per-chunk.</p>
+    </div>
+    <div class="tscroll">
+      <table>
+        <thead><tr><th>Design</th><th>Claude calls</th><th>Input tokens</th><th>Cost</th></tr></thead>
+        <tbody>
+          <tr><td>Current — UI filter, one call per file</td><td class="num">1</td><td class="num">4,937</td><td class="num">$0.0178</td></tr>
+          <tr><td>Per chunk, same filtered files</td><td class="num">2</td><td class="num">9,330</td><td class="num">$0.0340</td></tr>
+          <tr><td>Per chunk, no filter</td><td class="num">72</td><td class="num">331,638</td><td class="num">$1.2122</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <dl class="method">
+      <dt>Second PR</dt>
+      <dd>shadcn-ui/ui #11478, 4 files, 25.0% filtered out: <strong>23.5%</strong> saved versus per-chunk on the same files, <strong>37.7%</strong> versus unfiltered per-chunk. Small PRs save far less — quote a range, not the 98.5%.</dd>
+      <dt>Verify</dt>
+      <dd><code>run_pr_cost_eval.py shadcn-ui/ui 11484</code> → <code>results_pr_cost_11484.json</code>.</dd>
+    </dl>
+  </div>
+
+  <div class="finding holds">
+    <div class="finding-head">
+      <h3>Files removed by the non-UI filter</h3>
+      <span class="chip holds">Claim holds</span>
+    </div>
+    <div>
+      <div class="figure">73.5<span class="unit">% of files</span></div>
+      <p class="figure-note">1,598 of 2,173 tracked files across five real repositories never reach a Claude call.</p>
+    </div>
+    <div class="tscroll">
+      <table>
+        <thead><tr><th>Repository</th><th>Tracked files</th><th>After extension + size</th><th>After UI regex</th><th>Removed</th></tr></thead>
+        <tbody>
+          <tr><td>vuejs/vue-cli</td><td class="num">1,034</td><td class="num">120</td><td class="num">102</td><td class="num">90.1%</td></tr>
+          <tr><td>mdn/learning-area</td><td class="num">815</td><td class="num">413</td><td class="num">384</td><td class="num">52.9%</td></tr>
+          <tr><td>shadcn-ui/taxonomy</td><td class="num">188</td><td class="num">94</td><td class="num">70</td><td class="num">62.8%</td></tr>
+          <tr><td>access-advisor (self)</td><td class="num">91</td><td class="num">21</td><td class="num">18</td><td class="num">80.2%</td></tr>
+          <tr><td>react-redux-realworld</td><td class="num">45</td><td class="num">1</td><td class="num">1</td><td class="num">97.8%</td></tr>
+          <tr class="total"><td>Aggregate</td><td class="num">2,173</td><td class="num">649</td><td class="num">575</td><td class="num">73.5%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <dl class="method">
+      <dt>Two stages</dt>
+      <dd>The extension allow-list (<code>.html .jsx .tsx .vue .svelte</code>) plus the 100 KB cap does the heavy lifting — <strong>70.0%</strong> of all files. The <code>has_ui_content</code> regex removes a further <strong>11.4%</strong> of what survives. Attributing the whole 73.5% to the regex would overstate it.</dd>
+      <dt>Spread</dt>
+      <dd>52.9% to 97.8% across repositories. The honest résumé figure is the aggregate or the range, never the maximum.</dd>
+      <dt>Verify</dt>
+      <dd><code>run_filter_eval.py</code> → <code>results_filter.json</code>.</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">§3</span> Retrieval pipeline performance</h2>
+  <p class="section-lede">
+    Stage timings embed the query once, then query ChromaDB directly with that vector, five
+    repeats per query across the 30 eval snippets — this avoids inferring search time by
+    subtracting two separate wall-clock calls. End-to-end timings run serially against the real
+    <code>analyze_content_structured</code> the API routes call.
+  </p>
+
+  <div class="finding holds">
+    <div class="finding-head">
+      <h3>Per-stage latency</h3>
+      <span class="chip holds">Measured</span>
+    </div>
+    <div class="tscroll">
+      <table>
+        <thead><tr><th>Stage</th><th>n</th><th>Median</th><th>Mean</th><th>p95</th><th>Max</th></tr></thead>
+        <tbody>
+          <tr><td>Embed query (OpenAI text-embedding-3-small)</td><td class="num">30</td><td class="num">183.1 ms</td><td class="num">267.8 ms</td><td class="num">259.9 ms</td><td class="num">2,281.9 ms</td></tr>
+          <tr><td>ChromaDB search, top 15</td><td class="num">150</td><td class="num">3.2 ms</td><td class="num">5.1 ms</td><td class="num">9.4 ms</td><td class="num">145.0 ms</td></tr>
+          <tr><td>ChromaDB search, top 6</td><td class="num">150</td><td class="num">2.6 ms</td><td class="num">2.9 ms</td><td class="num">4.7 ms</td><td class="num">5.1 ms</td></tr>
+          <tr><td>Sort 15 → slice 6</td><td class="num">30</td><td class="num">3.8 µs</td><td class="num">3.8 µs</td><td class="num">4.3 µs</td><td class="num">4.8 µs</td></tr>
+          <tr><td>Retrieval total (in-pipeline)</td><td class="num">10</td><td class="num">254 ms</td><td class="num">326 ms</td><td class="num">351 ms</td><td class="num">958 ms</td></tr>
+          <tr><td>Claude generation</td><td class="num">10</td><td class="num">4.00 s</td><td class="num">4.22 s</td><td class="num">7.24 s</td><td class="num">7.39 s</td></tr>
+          <tr class="total"><td>End to end</td><td class="num">10</td><td class="num">4.31 s</td><td class="num">4.54 s</td><td class="num">—</td><td class="num">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <dl class="method">
+      <dt>Shape of it</dt>
+      <dd>Retrieval is <strong>~7%</strong> of end-to-end time; the LLM call is the rest. The vector search itself is a rounding error — 3.2 ms median against 650 vectors. The embedding network round-trip dominates retrieval.</dd>
+      <dt>Mean above p95</dt>
+      <dd>One 2.28 s embedding outlier (first call, cold connection) pulls the mean past the p95 at n = 30. Quote the median.</dd>
+      <dt>Verify</dt>
+      <dd><code>run_latency_breakdown.py</code> and <code>run_e2e_latency.py</code>.</dd>
+    </dl>
+  </div>
+
+  <div class="finding fails">
+    <div class="finding-head">
+      <h3>The &ldquo;re-ranking&rdquo; step is a no-op, then a lossy truncation</h3>
+      <span class="chip fails">Claim fails</span>
+    </div>
+    <div>
+      <div class="figure">0<span class="unit">of 30 queries reordered</span></div>
+      <p class="figure-note">And the slice to 6 drops the correct criterion in 10 of 30 further cases.</p>
+    </div>
+    <dl class="method">
+      <dt>What the code does</dt>
+      <dd><code>rag/query.py:74</code> sorts the 15 retrieved nodes by <code>n.score</code> descending, then slices to 6. That is the same cosine score ChromaDB already sorted by — no cross-encoder, no second model, no new signal. Measured across 30 queries the sort changed the order <strong>zero</strong> times. It is a 3.8 µs no-op.</dd>
+      <dt>The real cost</dt>
+      <dd>Whether the correct criterion's spec text is present at all: <strong>56.7%</strong> at k=15, <strong>23.3%</strong> at k=6. The slice throws away the right chunk in 10 of 30 cases — a 33.3 percentage-point loss of retrieval recall, which is the direct cause of the recall gap in §1.</dd>
+      <dt>Worth saying</dt>
+      <dd>This is the most useful engineering finding here. Passing all 15 chunks through would more than double retrieval recall for roughly 3,500 extra input tokens per call (about $0.01 at Sonnet 4.5 rates).</dd>
+      <dt>Verify</dt>
+      <dd><code>run_retrieval_perf.py</code> (<code>rerank_changed_order_vs_chroma</code>) and <code>run_retrieval_recall.py</code>.</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">§4</span> Scale and volume</h2>
+
+  <div class="finding holds">
+    <div class="finding-head">
+      <h3>Countable facts</h3>
+      <span class="chip holds">Verified</span>
+    </div>
+    <div class="tscroll">
+      <table>
+        <thead><tr><th>Quantity</th><th>Value</th><th>Source of truth</th></tr></thead>
+        <tbody>
+          <tr><td>Vectors in ChromaDB</td><td class="num">650</td><td><code>collection("wcag_docs").count()</code></td></tr>
+          <tr><td>WCAG 2.1 success criteria in the spec</td><td class="num">78</td><td>parsed from <code>data/wcag21.html</code></td></tr>
+          <tr><td>— by level</td><td class="num">30 A · 20 AA · 28 AAA</td><td>same parse</td></tr>
+          <tr><td>HTTP endpoints</td><td class="num">6</td><td>5 POST under <code>/api</code> + <code>GET /health</code></td></tr>
+          <tr><td>File types the repo scanner accepts</td><td class="num">5</td><td><code>.html .jsx .tsx .vue .svelte</code></td></tr>
+          <tr><td>Application code, backend Python</td><td class="num">701</td><td><code>git ls-files</code>, excl. tests and evals</td></tr>
+          <tr><td>Application code, frontend TS/TSX</td><td class="num">2,287</td><td><code>git ls-files</code></td></tr>
+          <tr><td>Stylesheets</td><td class="num">940</td><td><code>git ls-files</code></td></tr>
+          <tr class="total"><td>Total tracked source</td><td class="num">4,171</td><td>Python + TS/TSX + CSS, pre-eval-suite</td></tr>
+          <tr><td>Commits</td><td class="num">120</td><td>20 Jun – 19 Aug 2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <dl class="method">
+      <dt>Exclusions</dt>
+      <dd>Lockfiles, the two 450 KB WCAG HTML fixtures, and the eval suite added by this review are all excluded from the line counts. Including tests, backend Python is 944.</dd>
+      <dt>Caveat on 78</dt>
+      <dd>WCAG 2.1 does have exactly 78 success criteria, so the landing page number is right — but the second indexed file, <code>wcag21_quickref.html</code>, is the live W3C quickref and contains <strong>87</strong>, the 9 extras being WCAG 2.2. The index is a 2.1/2.2 mixture, not pure 2.1. That is what produced the one invalid citation in §1.</dd>
+    </dl>
+  </div>
+
+  <div class="finding caution">
+    <div class="finding-head">
+      <h3>Test coverage</h3>
+      <span class="chip caution">Tooling added</span>
+    </div>
+    <div>
+      <div class="figure">56<span class="unit">% of application code</span></div>
+      <p class="figure-note">375 statements, 166 uncovered. 67% if the test files count themselves.</p>
+    </div>
+    <dl class="method">
+      <dt>Did not exist</dt>
+      <dd>No coverage tooling was configured — <code>requirements.txt</code> pins <code>pytest==8.4.2</code> and nothing else. <code>pytest-cov</code> was installed into the micromamba env to produce this number; it is <strong>not</strong> added to <code>requirements.txt</code>.</dd>
+      <dt>Where the gaps are</dt>
+      <dd><code>routers/repo_scan.py</code> 28%, <code>rag/ingest.py</code> 41%, <code>routers/github.py</code> 48%, <code>rag/query.py</code> 49% — everything that needs a live GitHub token or a real API call. Fully covered: <code>config.py</code>, <code>rag/parse.py</code>, <code>routers/analyze.py</code>.</dd>
+      <dt>Reproduce</dt>
+      <dd><code>pytest --cov=config --cov=main --cov=rag --cov=routers --cov-report=term -q</code></dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">§5</span> Test suite and correctness</h2>
+
+  <div class="finding caution">
+    <div class="finding-head">
+      <h3>43 of 43 tests pass — and none of them test accuracy</h3>
+      <span class="chip caution">Read the qualifier</span>
+    </div>
+    <div>
+      <div class="figure">100<span class="unit">% pass</span> &nbsp;·&nbsp; 0<span class="unit">accuracy tests</span></div>
+      <p class="figure-note">43 passed in 4.83 s, 1 deprecation warning, no failures or skips.</p>
+    </div>
+    <div class="tscroll">
+      <table>
+        <thead><tr><th>Test file</th><th>Tests</th><th>What it actually asserts</th></tr></thead>
+        <tbody>
+          <tr><td><code>test_has_ui_content.py</code></td><td class="num">17</td><td>the UI-markup regex fires on markup and not on plain code</td></tr>
+          <tr><td><code>test_api.py</code></td><td class="num">7</td><td>API-key gate, streaming shape, request validation</td></tr>
+          <tr><td><code>test_parse.py</code></td><td class="num">7</td><td>tool-response normalisation (levels, line numbers)</td></tr>
+          <tr><td><code>test_scanner.py</code></td><td class="num">12</td><td>URL scheme and private-address rejection</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <dl class="method">
+      <dt>The gap</dt>
+      <dd>Not one test asserts that a given snippet yields a given success criterion. The suite tests plumbing — the filter regex, auth, URL validation, response normalisation — and is honest and useful at that. It says nothing about whether the reviewer is <em>right</em>. The §1 eval is the first thing in the project that does.</dd>
+      <dt>Fix if you want the bullet</dt>
+      <dd><code>cases.py</code> is already parametrisable. Twenty of the 30 cases could become an accuracy test gated on a recall threshold, so a regression in prompt or retrieval fails CI.</dd>
+    </dl>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">§6</span> What is safe to write down</h2>
+  <p class="section-lede">
+    Each of these traces to a committed script and a committed JSON result. The wording matters as
+    much as the number — the qualifiers are what make them defensible if someone asks.
+  </p>
+
+  <ul class="bullets">
+    <li><span class="marker">→</span><span><strong>Cut per-PR review cost by 98%</strong> on a 30-file pull request (measured $0.0178 versus $1.2122) by filtering non-UI files and batching each file into one structured Claude call instead of per-chunk calls — exact token counts via Anthropic's token-counting endpoint. Say <strong>46–86%</strong> for the single-file case, and note the saving scales with file size.</span></li>
+    <li><span class="marker">→</span><span><strong>Filtered out 73.5% of files</strong> before any LLM call across 2,173 tracked files in five open-source repositories (range 52.9–97.8%), via a file-type allow-list plus a UI-markup content check.</span></li>
+    <li><span class="marker">→</span><span><strong>Built a 30-case WCAG 2.1 evaluation harness</strong> covering 25 distinct success criteria, graded against all 78 criteria parsed from the W3C spec — and used it to show retrieval was <em>reducing</em> recall from 90% to 60% (McNemar p = 0.022), tracing the cause to 23.3% retrieval recall at k=6.</span></li>
+    <li><span class="marker">→</span><span><strong>Median 3.2 ms vector search</strong> over 650 embedded WCAG passages; retrieval is ~7% of the 4.3 s median end-to-end response, the LLM call is the rest.</span></li>
+    <li><span class="marker">→</span><span><strong>43 passing tests, 56% coverage</strong> of backend application code across a FastAPI service with 6 endpoints.</span></li>
+  </ul>
+
+  <div class="callout">
+    <h3>Three things to fix before this ships anywhere</h3>
+    <p>
+      <strong>Pass all 15 chunks, or re-rank for real.</strong> The current slice to 6 is the single
+      largest measured accuracy loss in the pipeline, and it buys 3.8 µs.
+    </p>
+    <p>
+      <strong>Re-index the quickref, or drop it.</strong> The file is the live WCAG 2.2 quickref
+      under a 2.1 filename, and it is the demonstrated source of the one out-of-version citation.
+    </p>
+    <p>
+      <strong>Remove &ldquo;100% findings cited&rdquo; from the landing page.</strong> Nothing measures it,
+      and the nearest real number — 97.1% of RAG-arm citations naming a valid criterion — is not 100%.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <p>Scripts, raw JSON results, and the 30-case fixture are committed at <code>backend/evals/</code>; see its README for the reproduction commands.</p>
+  <p>Sonnet 4.5 pricing verified at platform.claude.com/docs/en/about-claude/pricing on 19 Aug 2026: $3.00/MTok input, $15.00/MTok output.</p>
+</footer>
+
+</div>
