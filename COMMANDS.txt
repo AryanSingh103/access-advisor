@@ -1,0 +1,114 @@
+ACCESSADVISOR — COPY/PASTE COMMANDS
+
+Every command below uses absolute paths, so it works no matter what
+directory your shell is currently sitting in. There are no "#" comments
+inline with commands — your zsh isn't configured with interactive_comments,
+so a pasted "command # comment" gets the comment fed to the command as a
+literal argument instead of being ignored. Only paste the actual command
+lines, not the ── header ── lines.
+
+IMPORTANT: the system `python3` does NOT have the backend deps installed.
+The working Python env is at /Users/aryan/micromamba/bin/python3 (3.9.21).
+Every backend command below uses that full path on purpose — don't swap in
+plain `python3`/`pip3` or it'll look broken.
+
+NOTE: your backend (port 8000) and frontend (port 3000) are usually already
+running in the background from an earlier session. "Address already in use"
+when starting uvicorn just means it's already up — check with the commands
+below before trying to start a second copy.
+
+
+── CHECK IF SERVERS ARE ALREADY RUNNING ──────────────────────────────
+lsof -i :8000
+lsof -i :3000
+curl -s http://localhost:8000/health
+curl -s http://localhost:3000 -o /dev/null -w "%{http_code}\n"
+
+
+── START BACKEND ─────────────────────────────────────────────────────
+cd /Users/aryan/Desktop/access-advisor/backend
+/Users/aryan/micromamba/bin/python3 -m uvicorn main:app --port 8000 --reload
+
+
+── INSTALL/REINSTALL BACKEND DEPS (only if imports start failing) ────
+/Users/aryan/micromamba/bin/python3 -m pip install -r /Users/aryan/Desktop/access-advisor/backend/requirements.txt
+/Users/aryan/micromamba/bin/python3 -m playwright install chromium
+
+
+── START FRONTEND ────────────────────────────────────────────────────
+cd /Users/aryan/Desktop/access-advisor/frontend
+npm run dev
+
+
+── INSTALL/REINSTALL FRONTEND DEPS (only after fresh clone or dep changes) ──
+cd /Users/aryan/Desktop/access-advisor/frontend
+npm install
+
+
+── STOP SERVERS ──────────────────────────────────────────────────────
+lsof -ti :8000 | xargs kill
+lsof -ti :3000 | xargs kill
+
+
+── BACKEND: TESTS / LINT ─────────────────────────────────────────────
+cd /Users/aryan/Desktop/access-advisor/backend
+/Users/aryan/micromamba/bin/python3 -m pytest -q
+/Users/aryan/micromamba/bin/python3 -m ruff check .
+
+
+── FRONTEND: TYPECHECK / LINT / BUILD ────────────────────────────────
+cd /Users/aryan/Desktop/access-advisor/frontend
+npx tsc --noEmit
+npm run lint
+npm run build
+
+
+── SMOKE TEST: HEALTH CHECK ──────────────────────────────────────────
+curl -s http://localhost:8000/health
+
+
+── SMOKE TEST: CODE ANALYSIS (SSE stream) ────────────────────────────
+curl -s -N -X POST http://localhost:8000/api/analyze \
+  -H "Content-Type: application/json" \
+  -d '{"content":"<img src=\"x.jpg\">","content_type":"code"}'
+
+
+── SMOKE TEST: URL SCAN (NDJSON stream) ──────────────────────────────
+curl -s -N -X POST http://localhost:8000/api/scan-url \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://example.com"}'
+
+
+── CHROMADB: INSPECT THE VECTOR STORE ────────────────────────────────
+cd /Users/aryan/Desktop/access-advisor/backend
+/Users/aryan/micromamba/bin/python3 -c "
+import chromadb
+client = chromadb.PersistentClient(path='chroma_db')
+for c in client.list_collections():
+    print(c.name, client.get_collection(c.name).count())
+"
+
+
+── CHROMADB: NUKE AND RE-INGEST THE WCAG SPEC FROM SCRATCH ───────────
+rm -rf /Users/aryan/Desktop/access-advisor/backend/chroma_db
+Then just start the backend again — it re-ingests automatically on first boot.
+
+
+── ENV VARS: CHECK WHAT'S SET WITHOUT PRINTING SECRETS ───────────────
+cd /Users/aryan/Desktop/access-advisor
+while IFS='=' read -r key val; do [[ "$key" =~ ^#.*$ || -z "$key" ]] && continue; if [ -z "$val" ]; then echo "$key = EMPTY"; else echo "$key = set"; fi; done < .env
+
+
+── GRAPHIFY (this project's code-graph tool) ─────────────────────────
+cd /Users/aryan/Desktop/access-advisor
+graphify .
+graphify update .
+graphify query "<question>"
+graphify path "<A>" "<B>"
+graphify explain "<concept>"
+
+
+── GIT: CURRENT DIRTY STATE ───────────────────────────────────────────
+cd /Users/aryan/Desktop/access-advisor
+git status
+git diff CLAUDE.md
