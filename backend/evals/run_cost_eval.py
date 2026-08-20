@@ -10,7 +10,10 @@ identical per-call in expectation, so the per-chunk arm multiplies them by N.
 Pricing (claude-sonnet-4-5, verified at platform.claude.com/docs/en/about-claude/pricing
 on 2026-08-19): $3.00 / MTok input, $15.00 / MTok output.
 """
-import json, os, pathlib, sys
+import json
+import os
+import pathlib
+import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import httpx
 from llama_index.core.node_parser import SentenceSplitter

@@ -3,7 +3,13 @@ from __future__ import annotations
 function the API routes call: rag.query.analyze_content_structured.
 Splits retrieval from generation.
 """
-import asyncio, json, os, pathlib, statistics, sys, time
+import asyncio
+import json
+import os
+import pathlib
+import statistics
+import sys
+import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import settings
 os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
@@ -14,7 +20,9 @@ HERE = pathlib.Path(__file__).parent
 SAMPLE = CASES[:10]
 rows = []
 for c in SAMPLE:
-    t0 = time.perf_counter(); msg = Q._build_user_message(c["code"], "code"); t1 = time.perf_counter()
+    t0 = time.perf_counter()
+    msg = Q._build_user_message(c["code"], "code")
+    t1 = time.perf_counter()
     v = asyncio.get_event_loop().run_until_complete(Q.analyze_content_structured(c["code"], "code"))
     t2 = time.perf_counter()
     # _build_user_message ran twice (once here, once inside); subtract one retrieval

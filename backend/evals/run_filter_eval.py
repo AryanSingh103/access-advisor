@@ -7,7 +7,11 @@ Stage 2 (rag/query.py has_ui_content): regex for UI markup in file contents.
 
 Only files surviving BOTH stages cost a Claude call.
 """
-import json, os, pathlib, subprocess, sys
+import json
+import os
+import pathlib
+import subprocess
+import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from rag.query import has_ui_content
 from routers.repo_scan import ALLOWED_EXTENSIONS, MAX_FILE_SIZE, _is_scannable
@@ -18,7 +22,7 @@ REPOS = [pathlib.Path(p) for p in sys.argv[1:]]
 
 def tracked_files(repo: pathlib.Path):
     out = subprocess.run(["git", "-C", str(repo), "ls-files"], capture_output=True, text=True).stdout
-    return [l for l in out.splitlines() if l]
+    return [line for line in out.splitlines() if line]
 
 
 rows = []

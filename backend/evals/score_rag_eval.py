@@ -1,7 +1,7 @@
 from __future__ import annotations
 """Score the RAG vs no-RAG results into resume-grade numbers."""
-import json, pathlib
-from collections import Counter
+import json
+import pathlib
 
 HERE = pathlib.Path(__file__).parent
 R = json.loads((HERE / "results_rag_vs_norag.json").read_text())
@@ -76,9 +76,12 @@ def show(d):
               "expected_sc_recall_pct","input_tokens_per_case","output_tokens_per_case","mean_latency_s"):
         print(f"  {k:38s} {d[k]}")
 
-print("=== RAG arm ==="); show(rag)
-print("=== NO-RAG arm ==="); show(norag)
-print("=== grounding ==="); print(" ", grounding)
+print("=== RAG arm ===")
+show(rag)
+print("=== NO-RAG arm ===")
+show(norag)
+print("=== grounding ===")
+print(" ", grounding)
 print("\nRAG bad numbers:", rag["bad_number_examples"])
 print("NORAG bad numbers:", norag["bad_number_examples"])
 print("\nRAG bad names:", rag["bad_name_examples"])

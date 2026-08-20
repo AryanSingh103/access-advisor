@@ -6,7 +6,10 @@ A chunk "covers" criterion X if it contains X's number ("1.1.1") or X's exact
 name ("Non-text Content"). Measured at k=6 (what the LLM gets) and k=15
 (what Chroma returns before the slice).
 """
-import json, os, pathlib, sys
+import json
+import os
+import pathlib
+import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import settings
 os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
@@ -30,7 +33,8 @@ for case in CASES:
     txt6 = "\n".join(n.node.get_content() for n in nodes[:6])
     txt15 = "\n".join(n.node.get_content() for n in nodes)
     c6, c15 = covers(txt6, case["expected"]), covers(txt15, case["expected"])
-    hit6 += c6; hit15 += c15
+    hit6 += c6
+    hit15 += c15
     rows.append(dict(id=case["id"], expected=case["expected"], covered_at_k6=c6, covered_at_k15=c15,
                      top_score=round(nodes[0].score, 4), sixth_score=round(nodes[5].score, 4)))
     print(f"{case['id']:28s} exp={case['expected']:7s} k6={'HIT ' if c6 else 'miss'} k15={'HIT ' if c15 else 'miss'}")

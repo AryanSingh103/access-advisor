@@ -7,7 +7,11 @@ makes exactly one Claude call per surviving patch. This measures:
   - exact input tokens for the batched (per-file) design
   - exact input tokens for a naive per-chunk design over the same patches
 """
-import json, os, pathlib, subprocess, sys
+import json
+import os
+import pathlib
+import subprocess
+import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import httpx
 from llama_index.core.node_parser import SentenceSplitter
@@ -26,7 +30,8 @@ splitter = SentenceSplitter(chunk_size=512, chunk_overlap=50)
 
 
 def ctx(c):
-    n = retriever.retrieve(c); n.sort(key=lambda x: x.score or 0, reverse=True)
+    n = retriever.retrieve(c)
+    n.sort(key=lambda x: x.score or 0, reverse=True)
     return "\n\n---\n\n".join(f"[WCAG Context {i+1}]\n{x.node.get_content()}" for i, x in enumerate(n[:6]))
 
 
@@ -39,7 +44,8 @@ def count(msg):
                  "content-type": "application/json"},
         json={"model": MODEL, "system": STRUCTURED_SYSTEM_PROMPT, "tools": [VIOLATION_TOOL],
               "messages": [{"role": "user", "content": msg}]}, timeout=60)
-    r.raise_for_status(); return r.json()["input_tokens"]
+    r.raise_for_status()
+    return r.json()["input_tokens"]
 
 
 repo, pr = sys.argv[1], sys.argv[2]

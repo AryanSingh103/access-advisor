@@ -1,0 +1,5 @@
+# The eval scripts are standalone entry points: each inserts the backend
+# directory on sys.path before importing project modules, so their imports
+# cannot all sit at the top of the file.
+[lint.per-file-ignores]
+"evals/*.py" = ["E402"]

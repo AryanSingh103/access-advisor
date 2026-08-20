@@ -3,7 +3,12 @@ from __future__ import annotations
 that vector. Avoids the noise of subtracting two separate wall-clock calls.
 30 queries x 5 repeats.
 """
-import json, os, pathlib, statistics, sys, time
+import json
+import os
+import pathlib
+import statistics
+import sys
+import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import settings
 os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
@@ -21,10 +26,16 @@ embed_ms, search15_ms, search6_ms, rerank_us = [], [], [], []
 REPEATS = 5
 for case in CASES:
     q = case["code"]
-    t = time.perf_counter(); vec = embed.get_query_embedding(q); embed_ms.append((time.perf_counter()-t)*1000)
+    t = time.perf_counter()
+    vec = embed.get_query_embedding(q)
+    embed_ms.append((time.perf_counter() - t) * 1000)
     for _ in range(REPEATS):
-        t = time.perf_counter(); res15 = coll.query(query_embeddings=[vec], n_results=15); search15_ms.append((time.perf_counter()-t)*1000)
-        t = time.perf_counter(); coll.query(query_embeddings=[vec], n_results=6); search6_ms.append((time.perf_counter()-t)*1000)
+        t = time.perf_counter()
+        res15 = coll.query(query_embeddings=[vec], n_results=15)
+        search15_ms.append((time.perf_counter() - t) * 1000)
+        t = time.perf_counter()
+        coll.query(query_embeddings=[vec], n_results=6)
+        search6_ms.append((time.perf_counter() - t) * 1000)
     pairs = list(zip(res15["ids"][0], res15["distances"][0]))
     t = time.perf_counter()
     top6 = sorted(pairs, key=lambda p: p[1])[:6]
