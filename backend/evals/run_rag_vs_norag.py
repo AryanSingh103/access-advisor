@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """RAG vs no-RAG eval: does retrieval reduce hallucinated WCAG citations?
 
 Both arms use the SAME model, system prompt and tool schema. The ONLY
@@ -15,11 +16,11 @@ from concurrent.futures import ThreadPoolExecutor
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import anthropic
+from cases import CASES
 
 from config import settings
 from rag.parse import VIOLATION_TOOL, violations_from_tool_response
 from rag.query import STRUCTURED_SYSTEM_PROMPT, _get_index
-from cases import CASES
 
 HERE = pathlib.Path(__file__).parent
 CRITERIA = json.loads((HERE / "wcag21_criteria.json").read_text())

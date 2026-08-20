@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """Cost comparison: one Claude call per file (current design) vs one call per
 chunk (naive baseline).
 
@@ -14,12 +15,14 @@ import json
 import os
 import pathlib
 import sys
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import httpx
 from llama_index.core.node_parser import SentenceSplitter
 from llama_index.core.schema import Document
 
 from config import settings
+
 os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
 from rag.ingest import get_or_create_index
 from rag.parse import VIOLATION_TOOL
@@ -75,17 +78,17 @@ def analyze(label: str, text: str) -> dict:
     a_out_cost = MEAN_OUTPUT_TOKENS / 1e6 * OUT_PER_MTOK
     b_out_cost = len(chunks) * MEAN_OUTPUT_TOKENS / 1e6 * OUT_PER_MTOK
 
-    row = dict(
-        target=label, source_chars=len(text), source_lines=text.count("\n") + 1,
-        batched_calls=1, batched_input_tokens=a_tokens,
-        per_chunk_calls=len(chunks), per_chunk_input_tokens=sum(b_tokens),
-        per_chunk_input_tokens_each=b_tokens,
-        input_token_ratio=round(sum(b_tokens) / a_tokens, 2),
-        batched_cost_usd=round(a_in_cost + a_out_cost, 6),
-        per_chunk_cost_usd=round(b_in_cost + b_out_cost, 6),
-        cost_ratio=round((b_in_cost + b_out_cost) / (a_in_cost + a_out_cost), 2),
-        pct_cost_saved_by_batching=round(100 * (1 - (a_in_cost + a_out_cost) / (b_in_cost + b_out_cost)), 2),
-    )
+    row = {
+        "target": label, "source_chars": len(text), "source_lines": text.count("\n") + 1,
+        "batched_calls": 1, "batched_input_tokens": a_tokens,
+        "per_chunk_calls": len(chunks), "per_chunk_input_tokens": sum(b_tokens),
+        "per_chunk_input_tokens_each": b_tokens,
+        "input_token_ratio": round(sum(b_tokens) / a_tokens, 2),
+        "batched_cost_usd": round(a_in_cost + a_out_cost, 6),
+        "per_chunk_cost_usd": round(b_in_cost + b_out_cost, 6),
+        "cost_ratio": round((b_in_cost + b_out_cost) / (a_in_cost + a_out_cost), 2),
+        "pct_cost_saved_by_batching": round(100 * (1 - (a_in_cost + a_out_cost) / (b_in_cost + b_out_cost)), 2),
+    }
     print(json.dumps({k: v for k, v in row.items() if k != "per_chunk_input_tokens_each"}, indent=2))
     return row
 

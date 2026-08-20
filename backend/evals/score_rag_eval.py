@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """Score the RAG vs no-RAG results into resume-grade numbers."""
 import json
 import pathlib
@@ -26,33 +27,33 @@ def arm_stats(arm: str):
     tok_out = sum(case[arm]["usage"]["output_tokens"] for case in R)
     lat = [case[arm]["elapsed_s"] for case in R]
 
-    return dict(
-        arm=arm,
-        cases=len(R),
-        total_citations=n,
-        citations_per_case=round(n / len(R), 2),
+    return {
+        "arm": arm,
+        "cases": len(R),
+        "total_citations": n,
+        "citations_per_case": round(n / len(R), 2),
         # --- hallucination ---
-        invalid_sc_number=len(bad_num),
-        invalid_sc_number_pct=round(100 * len(bad_num) / n, 2) if n else None,
-        wrong_name_for_valid_number=len(bad_name),
-        wrong_name_pct=round(100 * len(bad_name) / n, 2) if n else None,
-        wrong_level_for_valid_number=len(bad_lvl),
-        wrong_level_pct=round(100 * len(bad_lvl) / n, 2) if n else None,
-        fully_correct_citations=len(fully_ok),
-        fully_correct_pct=round(100 * len(fully_ok) / n, 2) if n else None,
+        "invalid_sc_number": len(bad_num),
+        "invalid_sc_number_pct": round(100 * len(bad_num) / n, 2) if n else None,
+        "wrong_name_for_valid_number": len(bad_name),
+        "wrong_name_pct": round(100 * len(bad_name) / n, 2) if n else None,
+        "wrong_level_for_valid_number": len(bad_lvl),
+        "wrong_level_pct": round(100 * len(bad_lvl) / n, 2) if n else None,
+        "fully_correct_citations": len(fully_ok),
+        "fully_correct_pct": round(100 * len(fully_ok) / n, 2) if n else None,
         # --- recall on the seeded violation ---
-        cases_where_expected_sc_reported=hits,
-        expected_sc_recall_pct=round(100 * hits / len(R), 2),
+        "cases_where_expected_sc_reported": hits,
+        "expected_sc_recall_pct": round(100 * hits / len(R), 2),
         # --- cost / latency ---
-        input_tokens_total=tok_in,
-        output_tokens_total=tok_out,
-        input_tokens_per_case=round(tok_in / len(R), 1),
-        output_tokens_per_case=round(tok_out / len(R), 1),
-        mean_latency_s=round(sum(lat) / len(lat), 2),
-        bad_number_examples=[(c["criterion"], c["criterion_name"]) for c in bad_num][:12],
-        bad_name_examples=[(c["criterion"], c["criterion_name"], CRIT[c["criterion"]]["name"]) for c in bad_name][:12],
-        bad_level_examples=[(c["criterion"], c["level"], CRIT[c["criterion"]]["level"]) for c in bad_lvl][:12],
-    )
+        "input_tokens_total": tok_in,
+        "output_tokens_total": tok_out,
+        "input_tokens_per_case": round(tok_in / len(R), 1),
+        "output_tokens_per_case": round(tok_out / len(R), 1),
+        "mean_latency_s": round(sum(lat) / len(lat), 2),
+        "bad_number_examples": [(c["criterion"], c["criterion_name"]) for c in bad_num][:12],
+        "bad_name_examples": [(c["criterion"], c["criterion_name"], CRIT[c["criterion"]]["name"]) for c in bad_name][:12],
+        "bad_level_examples": [(c["criterion"], c["level"], CRIT[c["criterion"]]["level"]) for c in bad_lvl][:12],
+    }
 
 
 rag, norag = arm_stats("rag"), arm_stats("norag")
@@ -60,13 +61,13 @@ rag, norag = arm_stats("rag"), arm_stats("norag")
 # grounding: is the cited SC number literally present in the retrieved chunks?
 rag_cits = [c for case in R for c in case["rag"]["citations"]]
 in_ctx = sum(1 for c in rag_cits if c["number_present_in_retrieved_context"])
-grounding = dict(
-    rag_citations=len(rag_cits),
-    cited_number_appears_in_retrieved_chunks=in_ctx,
-    pct=round(100 * in_ctx / len(rag_cits), 2),
-)
+grounding = {
+    "rag_citations": len(rag_cits),
+    "cited_number_appears_in_retrieved_chunks": in_ctx,
+    "pct": round(100 * in_ctx / len(rag_cits), 2),
+}
 
-out = dict(rag=rag, norag=norag, grounding_check=grounding)
+out = {"rag": rag, "norag": norag, "grounding_check": grounding}
 (HERE / "results_scored.json").write_text(json.dumps(out, indent=2))
 
 def show(d):

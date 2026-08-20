@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """Clean per-stage latency: embed the query, then query ChromaDB directly with
 that vector. Avoids the noise of subtracting two separate wall-clock calls.
 30 queries x 5 repeats.
@@ -9,13 +10,16 @@ import pathlib
 import statistics
 import sys
 import time
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import settings
+
 os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
 import chromadb
-from llama_index.embeddings.openai import OpenAIEmbedding
-from rag.ingest import CHROMA_PATH, COLLECTION_NAME
 from cases import CASES
+from llama_index.embeddings.openai import OpenAIEmbedding
+
+from rag.ingest import CHROMA_PATH, COLLECTION_NAME
 
 HERE = pathlib.Path(__file__).parent
 embed = OpenAIEmbedding(model="text-embedding-3-small")
@@ -45,8 +49,8 @@ def s(name, vals, unit):
     v = sorted(vals)
     print(f"{name:14s} n={len(v):4d}  mean={statistics.mean(v):8.3f}{unit}  median={statistics.median(v):8.3f}{unit}  "
           f"p95={v[int(0.95*len(v))-1]:8.3f}{unit}  min={v[0]:7.3f}  max={v[-1]:8.3f}")
-    return dict(n=len(v), mean=statistics.mean(v), median=statistics.median(v),
-                p95=v[int(0.95*len(v))-1], min=v[0], max=v[-1], unit=unit.strip())
+    return {"n": len(v), "mean": statistics.mean(v), "median": statistics.median(v),
+                "p95": v[int(0.95*len(v))-1], "min": v[0], "max": v[-1], "unit": unit.strip()}
 
 out = {
   "embed_query": s("embed_query", embed_ms, "ms"),

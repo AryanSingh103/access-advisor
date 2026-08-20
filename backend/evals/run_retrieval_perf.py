@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 """Latency + rerank-effect measurement for the retrieval pipeline.
 
 Measures, per query:
@@ -17,9 +18,10 @@ import sys
 import time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from cases import CASES
+
 from config import settings
 from rag.ingest import get_or_create_index
-from cases import CASES
 
 os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
 HERE = pathlib.Path(__file__).parent
@@ -74,10 +76,10 @@ for case in CASES:
 
 def summ(key):
     vals = [r[key] for r in rows]
-    return dict(mean=round(statistics.mean(vals), 5),
-                median=round(statistics.median(vals), 5),
-                p95=round(sorted(vals)[int(0.95 * len(vals)) - 1], 5),
-                min=round(min(vals), 5), max=round(max(vals), 5))
+    return {"mean": round(statistics.mean(vals), 5),
+                "median": round(statistics.median(vals), 5),
+                "p95": round(sorted(vals)[int(0.95 * len(vals)) - 1], 5),
+                "min": round(min(vals), 5), "max": round(max(vals), 5)}
 
 
 print("\n--- summary over", len(rows), "queries ---")
