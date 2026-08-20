@@ -21,3 +21,6 @@ graphify-out/
 
 # eval caches
 backend/evals/__pycache__/
+
+# coverage data
+backend/.coverage
