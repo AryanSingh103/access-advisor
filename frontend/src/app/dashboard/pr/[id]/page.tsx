@@ -35,11 +35,10 @@ function PRAnalysisContent({ params }: PageProps) {
   const [repo, setRepo] = useState(repoParam);
   const [prNumber, setPrNumber] = useState(prParam);
 
-  const { data: session, status } = useSession();
-  const githubToken = session?.accessToken ?? "";
+  const { status } = useSession();
 
   const handleAnalyze = async () => {
-    if (!githubToken) {
+    if (status !== "authenticated") {
       setError("Please sign in with GitHub first.");
       return;
     }
@@ -53,7 +52,7 @@ function PRAnalysisContent({ params }: PageProps) {
     setPosted(null);
 
     try {
-      const result = await analyzePR(repo, parseInt(prNumber), githubToken);
+      const result = await analyzePR(repo, parseInt(prNumber));
       setViolations(result.violations);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Analysis failed.");
@@ -76,12 +75,12 @@ function PRAnalysisContent({ params }: PageProps) {
   }, [status]);
 
   const handlePostComments = async () => {
-    if (!repo || !prNumber || !githubToken || violations.length === 0) return;
+    if (!repo || !prNumber || violations.length === 0) return;
     setIsPosting(true);
     setError(null);
 
     try {
-      const result = await postComments(repo, parseInt(prNumber), githubToken, violations);
+      const result = await postComments(repo, parseInt(prNumber), violations);
       setPosted(result.comments_posted);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to post comments.");

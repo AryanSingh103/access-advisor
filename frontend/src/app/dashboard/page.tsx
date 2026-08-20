@@ -4,21 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { AppHeader } from "@/components/AppHeader";
-
-interface Repo {
-  full_name: string;
-  name: string;
-  open_issues_count: number;
-  updated_at: string;
-}
-
-interface PullRequest {
-  number: number;
-  title: string;
-  updated_at: string;
-  user: { login: string };
-  draft: boolean;
-}
+import { listPullRequests, listRepos, type PullRequest, type Repo } from "@/lib/api";
 
 function timeAgo(iso: string): string {
   const seconds = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -38,7 +24,6 @@ function timeAgo(iso: string): string {
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
-  const token = session?.accessToken ?? "";
   const userName = session?.user?.name ?? session?.user?.email ?? "user";
   const userInitial = userName.charAt(0).toUpperCase();
 
@@ -52,18 +37,13 @@ export default function DashboardPage() {
   const [repoInput, setRepoInput] = useState("");
 
   useEffect(() => {
-    if (status !== "authenticated" || !token) return;
+    if (status !== "authenticated") return;
     let cancelled = false;
 
     (async () => {
       setReposLoading(true);
       try {
-        const res = await fetch(
-          "https://api.github.com/user/repos?sort=updated&per_page=20",
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
-        const data = (await res.json()) as Repo[];
+        const data = await listRepos();
         if (cancelled) return;
         setRepos(data);
         if (data.length > 0) setSelectedRepo(data[0]);
@@ -77,21 +57,16 @@ export default function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [status, token]);
+  }, [status]);
 
   useEffect(() => {
-    if (!selectedRepo || !token) return;
+    if (!selectedRepo) return;
     let cancelled = false;
 
     (async () => {
       setPrsLoading(true);
       try {
-        const res = await fetch(
-          `https://api.github.com/repos/${selectedRepo.full_name}/pulls?state=open&per_page=20`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
-        const data = (await res.json()) as PullRequest[];
+        const data = await listPullRequests(selectedRepo.full_name);
         if (!cancelled) setPrs(data);
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : "Failed to load PRs.");
@@ -103,7 +78,7 @@ export default function DashboardPage() {
     return () => {
       cancelled = true;
     };
-  }, [selectedRepo, token]);
+  }, [selectedRepo]);
 
   return (
     <div className="min-h-screen bg-[#0F0F12] flex flex-col">

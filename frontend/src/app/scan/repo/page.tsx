@@ -43,8 +43,7 @@ function buildReport(results: FileResult[]): string {
 
 export default function RepoScanPage() {
   const [repo, setRepo] = useState("");
-  const { data: session, status } = useSession();
-  const token = session?.accessToken ?? "";
+  const { status } = useSession();
   const [isScanning, setIsScanning] = useState(false);
   const [currentFile, setCurrentFile] = useState<string | null>(null);
   const [progress, setProgress] = useState<{ index: number; total: number } | null>(null);
@@ -55,7 +54,7 @@ export default function RepoScanPage() {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const handleScan = async () => {
-    if (!token) {
+    if (status !== "authenticated") {
       setError("Please sign in with GitHub first.");
       return;
     }
@@ -70,7 +69,7 @@ export default function RepoScanPage() {
     setExpanded(new Set());
 
     try {
-      for await (const event of scanRepo(repo, token)) {
+      for await (const event of scanRepo(repo)) {
         handleEvent(event);
       }
     } catch (err) {

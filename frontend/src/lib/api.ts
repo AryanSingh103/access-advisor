@@ -1,10 +1,18 @@
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL ?? "http://localhost:8000";
-const BACKEND_API_KEY = process.env.NEXT_PUBLIC_BACKEND_API_KEY ?? "";
+/**
+ * Browser-side API client.
+ *
+ * Every call goes to a same-origin Route Handler under /api. Those handlers add
+ * the backend API key and the user's GitHub token server-side, so neither
+ * credential is ever present in this bundle.
+ */
 
-function apiHeaders(): Record<string, string> {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (BACKEND_API_KEY) headers["X-API-Key"] = BACKEND_API_KEY;
-  return headers;
+async function errorFrom(res: Response, fallback: string): Promise<Error> {
+  const body = await res.json().catch(() => null);
+  const message =
+    body && typeof body === "object" && typeof (body as { error?: unknown }).error === "string"
+      ? (body as { error: string }).error
+      : fallback;
+  return new Error(message);
 }
 
 export interface Violation {
@@ -32,18 +40,35 @@ export interface PostCommentsResponse {
   failed: FailedComment[];
 }
 
+export interface Repo {
+  full_name: string;
+  name: string;
+  open_issues_count: number;
+  updated_at: string;
+}
+
+export interface PullRequest {
+  number: number;
+  title: string;
+  updated_at: string;
+  user: { login: string };
+  draft: boolean;
+}
+
+const JSON_HEADERS = { "Content-Type": "application/json" };
+
 export async function* streamAnalysis(
   content: string,
   contentType: "code" | "dom"
 ): AsyncGenerator<string> {
-  const res = await fetch(`${BACKEND_URL}/api/analyze`, {
+  const res = await fetch("/api/analyze", {
     method: "POST",
-    headers: apiHeaders(),
+    headers: JSON_HEADERS,
     body: JSON.stringify({ content, content_type: contentType }),
   });
 
   if (!res.ok || !res.body) {
-    throw new Error(`Backend error: ${res.status}`);
+    throw await errorFrom(res, "Analysis failed. Try again.");
   }
 
   const reader = res.body.getReader();
@@ -56,48 +81,42 @@ export async function* streamAnalysis(
   }
 }
 
-export async function analyzePR(
-  repo: string,
-  prNumber: number,
-  githubToken: string
-): Promise<AnalyzePRResponse> {
-  const res = await fetch(`${BACKEND_URL}/api/github/analyze-pr`, {
+export async function analyzePR(repo: string, prNumber: number): Promise<AnalyzePRResponse> {
+  const res = await fetch("/api/github/analyze-pr", {
     method: "POST",
-    headers: apiHeaders(),
-    body: JSON.stringify({ repo, pr_number: prNumber, github_token: githubToken }),
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ repo, pr_number: prNumber }),
   });
 
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`PR analysis failed: ${err}`);
-  }
-
+  if (!res.ok) throw await errorFrom(res, "PR analysis failed.");
   return res.json() as Promise<AnalyzePRResponse>;
 }
 
 export async function postComments(
   repo: string,
   prNumber: number,
-  githubToken: string,
   violations: Violation[]
 ): Promise<PostCommentsResponse> {
-  const res = await fetch(`${BACKEND_URL}/api/github/post-comments`, {
+  const res = await fetch("/api/github/post-comments", {
     method: "POST",
-    headers: apiHeaders(),
-    body: JSON.stringify({
-      repo,
-      pr_number: prNumber,
-      github_token: githubToken,
-      violations,
-    }),
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ repo, pr_number: prNumber, violations }),
   });
 
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Post comments failed: ${err}`);
-  }
-
+  if (!res.ok) throw await errorFrom(res, "Could not post comments to the PR.");
   return res.json() as Promise<PostCommentsResponse>;
+}
+
+export async function listRepos(): Promise<Repo[]> {
+  const res = await fetch("/api/github/repos");
+  if (!res.ok) throw await errorFrom(res, "Could not load your repositories.");
+  return res.json() as Promise<Repo[]>;
+}
+
+export async function listPullRequests(repo: string): Promise<PullRequest[]> {
+  const res = await fetch(`/api/github/pulls?repo=${encodeURIComponent(repo)}`);
+  if (!res.ok) throw await errorFrom(res, "Could not load pull requests.");
+  return res.json() as Promise<PullRequest[]>;
 }
 
 async function* ndjsonStream<T>(res: Response): AsyncGenerator<T> {
@@ -132,14 +151,14 @@ export type ScanUrlEvent =
   | { type: "done"; total_violations: number };
 
 export async function* scanUrl(url: string): AsyncGenerator<ScanUrlEvent> {
-  const res = await fetch(`${BACKEND_URL}/api/scan-url`, {
+  const res = await fetch("/api/scan-url", {
     method: "POST",
-    headers: apiHeaders(),
+    headers: JSON_HEADERS,
     body: JSON.stringify({ url }),
   });
 
   if (!res.ok || !res.body) {
-    throw new Error(`Scan failed: ${res.status}`);
+    throw await errorFrom(res, "Scan failed. Check the URL and try again.");
   }
 
   yield* ndjsonStream<ScanUrlEvent>(res);
@@ -160,18 +179,15 @@ export interface RepoScanEvent {
   total_violations?: number;
 }
 
-export async function* scanRepo(
-  repo: string,
-  githubToken: string
-): AsyncGenerator<RepoScanEvent> {
-  const res = await fetch(`${BACKEND_URL}/api/repo-scan`, {
+export async function* scanRepo(repo: string): AsyncGenerator<RepoScanEvent> {
+  const res = await fetch("/api/repo-scan", {
     method: "POST",
-    headers: apiHeaders(),
-    body: JSON.stringify({ repo, github_token: githubToken }),
+    headers: JSON_HEADERS,
+    body: JSON.stringify({ repo }),
   });
 
   if (!res.ok || !res.body) {
-    throw new Error(`Repo scan failed: ${res.status}`);
+    throw await errorFrom(res, "Repo scan failed.");
   }
 
   yield* ndjsonStream<RepoScanEvent>(res);

@@ -116,11 +116,14 @@ access-advisor/
         │   ├── dashboard/            # Dashboard + PR list
         │   ├── dashboard/pr/[id]/    # PR analysis view
         │   ├── scan/                 # URL scanner
-        │   └── scan/repo/            # Repo scanner
+        │   ├── scan/repo/            # Repo scanner
+        │   └── api/                  # Route Handlers — the only code that
+        │                             #   holds the backend key + GitHub token
         ├── components/
         │   └── WcagBadge.tsx         # Criterion badge with WCAG links
         └── lib/
-            └── api.ts                # Backend helpers, streaming generators
+            ├── api.ts                # Browser client — calls same-origin /api
+            └── server/               # Server-only: backend + GitHub token access
 ```
 
 ---

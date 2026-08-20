@@ -21,9 +21,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
-      session.accessToken = token.accessToken as string;
-      return session;
-    },
+    // No `session` callback copies accessToken onto the session: the session is
+    // serialised to the browser, and this token carries repo scope. Route
+    // Handlers read it from the JWT via lib/server/github.ts instead.
   },
 });
