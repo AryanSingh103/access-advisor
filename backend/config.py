@@ -1,5 +1,6 @@
 import os
 import pathlib
+from typing import ClassVar
 
 from dotenv import load_dotenv
 
@@ -17,7 +18,7 @@ class Settings:
     # Optional shared secret: when set, all /api routes require X-API-Key to match.
     BACKEND_API_KEY: str = os.getenv("BACKEND_API_KEY", "")
     # Comma-separated list of allowed frontend origins for CORS.
-    ALLOWED_ORIGINS: list[str] = [
+    ALLOWED_ORIGINS: ClassVar[list[str]] = [
         origin.strip()
         for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
         if origin.strip()
