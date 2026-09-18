@@ -2,7 +2,7 @@ import logging
 import os
 import re
 import sys
-from typing import AsyncGenerator
+from collections.abc import AsyncGenerator
 
 import anthropic
 

@@ -44,7 +44,7 @@ async def require_api_key(x_api_key: str = Header(default="")) -> None:
         raise HTTPException(status_code=401, detail="Invalid or missing X-API-Key")
 
 
-from routers import analyze, github, scanner, repo_scan  # noqa: E402
+from routers import analyze, github, repo_scan, scanner
 
 app.include_router(analyze.router, prefix="/api", dependencies=[Depends(require_api_key)])
 app.include_router(github.router, prefix="/api/github", dependencies=[Depends(require_api_key)])

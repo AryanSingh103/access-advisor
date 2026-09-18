@@ -1,5 +1,4 @@
 import logging
-from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 from github import Github
@@ -19,7 +18,7 @@ class AnalyzePRRequest(BaseModel):
 
 class Violation(BaseModel):
     file_path: str
-    line_number: Optional[int]
+    line_number: int | None
     criterion: str
     criterion_name: str = ""
     level: str
@@ -40,7 +39,7 @@ class PostCommentsRequest(BaseModel):
 
 class FailedComment(BaseModel):
     file_path: str
-    line_number: Optional[int]
+    line_number: int | None
     reason: str
 
 

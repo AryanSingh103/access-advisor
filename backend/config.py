@@ -1,5 +1,6 @@
 import os
 import pathlib
+
 from dotenv import load_dotenv
 
 # Try local .env first, then fall back to repo-root .env
