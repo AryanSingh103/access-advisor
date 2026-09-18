@@ -3,3 +3,8 @@
 # cannot all sit at the top of the file.
 [lint.per-file-ignores]
 "evals/*.py" = ["E402"]
+# Routers are request boundaries: an unhandled exception here should become
+# a client-facing error response (HTTP or a streamed {"type": "error"}
+# event), not a raw 500/crashed stream, so catching Exception broadly is
+# intentional rather than sloppy.
+"routers/*.py" = ["BLE001"]
