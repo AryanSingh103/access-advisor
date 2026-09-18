@@ -45,7 +45,7 @@ def build_vector_store() -> VectorStoreIndex:
     nodes = chunk_documents(docs)
     logger.info("Chunked documents into %d nodes", len(nodes))
 
-    chroma_client, collection = _get_chroma_collection()
+    _chroma_client, collection = _get_chroma_collection()
     vector_store = ChromaVectorStore(chroma_collection=collection)
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
@@ -58,7 +58,7 @@ def build_vector_store() -> VectorStoreIndex:
 def get_or_create_index() -> VectorStoreIndex:
     os.environ["OPENAI_API_KEY"] = settings.OPENAI_API_KEY
 
-    chroma_client, collection = _get_chroma_collection()
+    _chroma_client, collection = _get_chroma_collection()
     count = collection.count()
 
     if count > 0:
